@@ -8,7 +8,8 @@ set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 APP=Compositor
-REPO=robbietilton/Compositor
+# This fork's release target; override with `REPO=owner/name ./scripts/publish.sh`.
+REPO="${REPO:-wy357251/Compositor-CN}"
 WORK="$HOME/Library/Caches/CompositorRelease"
 SIGN_UPDATE="$WORK/DerivedData/SourcePackages/artifacts/sparkle/Sparkle/bin/sign_update"
 
