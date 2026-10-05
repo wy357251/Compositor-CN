@@ -1,101 +1,135 @@
-# Compositor
+# Compositor-CN
 
-Adobe Photoshop costs too much and tools like GIMP don’t feel familiar enough for me to stay in flow. That’s why I built Compositor.
+Compositor 的简体中文分支。上游是 [robbietilton/Compositor](https://github.com/robbietilton/Compositor)——一款面向 Mac 的免费开源 Photoshop 替代品；本仓库在它的基础上加入了简体中文界面，内容基于上游 v1.4.5（build 40）。
 
-The goal was to create a full-featured image editor that is completely free and open source. I used to use Photoshop for compositing and post-processing, so Compositor is built around that workflow - with the tools needed to create a pixel-perfect final image.
+Adobe Photoshop 太贵，而 GIMP 之类的工具又不够顺手，难以让人保持专注——这就是作者 Robbie Tilton 做 Compositor 的原因。目标是做一个功能完整的图像编辑器：他过去用 Photoshop 做合成与后期，所以 Compositor 也围绕这套工作流来设计，提供产出像素级成图所需的工具。因为开源，你可以直接拿到 Xcode 工程，按需添加、移除或修改任何功能。
 
-Because it’s open source, you can download the Xcode project and add, remove, or modify any feature to fit your workflow.
+## 安装
 
-## Installation
+### 从源码构建（本仓库）
 
-### Download
-Get Compositor from [robbietilton.com/compositor](https://robbietilton.com/compositor), or download the latest release directly from [GitHub Releases](https://github.com/robbietilton/Compositor/releases/latest).
+```sh
+git clone git@github.com:wy357251/Compositor-CN.git
+open Compositor.xcodeproj    # 运行 Compositor scheme
+```
 
-### Homebrew
+命令行构建：
+
+```sh
+xcodebuild -project Compositor.xcodeproj -scheme Compositor \
+  -destination 'platform=macOS,arch=arm64' -configuration Release build
+```
+
+本仓库目前不提供自己的 Release 产物（`.dmg`、签名与公证都在原作者手里）。想要开箱即用的版本，请安装上游发行版：[robbietilton.com/compositor](https://robbietilton.com/compositor)，或 Homebrew：
 
 ```sh
 brew install --cask robbietilton-compositor
 ```
 
-## Features
+上游发行版不含这里的中文界面。
 
-### Layers
-- Layers and folders, with opacity and Photoshop's full set of blend modes in its order — a folder's opacity dims everything inside it
-- Layer masks: paint, fill, invert, blur and feather them anywhere on the canvas, past the layer's own pixels; link or unlink them to transform a mask on its own
-- Clipping masks and folder masks
-- Adjustment layers: Hue/Saturation, Levels, Curves, Exposure, Gradient Map, Grain, Black & White, Color Balance, Invert, Gaussian Blur, Motion Blur and Noise
-- Layer effects: Stroke, Drop Shadow, Color Overlay, Inner Shadow, Outer Glow and Inner Glow, rendered on the GPU and editable at any time
-- Merge Down, Merge Layers and Merge Group (⌘E)
-- Duplicate, rename inline, reorder and nest by drag and drop; Option-drag to duplicate; a right-click menu in the Layers panel
-- Copy and paste whole layers and folders (⌘C/⌘V with no selection), within a project or between projects, or drag them between projects
+## 中文界面
 
-### Transform
-- Non-destructive move, scale, rotate and flip — images keep their full resolution however small you make them
-- Free distort (⌘-drag a handle), with Shift to lock to an axis
-- Transform several layers, or a whole folder, together
-- Snapping to canvas and layer edges and centers, with guides
-- Exact values for position, size, scale and angle, stepped with the arrow keys
-- Flip Layer and Flip Canvas, horizontal and vertical
+界面语言跟随系统的 preferred languages：当简体中文排在首位时，构建出的 App 自动以中文显示，无需任何设置。想单独为这个 App 指定语言：
 
-### Selections
-- Rectangle and Ellipse Marquee, Freehand and Polygonal Lasso, and the Magic tool — Wand selects by color, Object traces whatever you click (Tab switches)
-- Select Subject, and Expand, Contract and Feather on any selection
-- Add to and subtract from selections, move the outline, or move and duplicate the pixels inside
-- Load a layer's pixels or a mask as a selection
-- Content-Aware Fill, which can also extend an image past its edges
+```sh
+defaults write com.wonderassembly.compositor AppleLanguages -array zh-Hans
+```
 
-### Painting and retouching
-- Brush with size, hardness, opacity and smoothing, in Paint or Erase mode (B and E), and Shift for straight lines
-- Spot Healing Brush (content-aware)
-- Clone Stamp, aligned or not, sampling one layer or all of them
-- Blur tool, on pixels or masks
-- Gradient tool and Shape tool (rectangles, rounded rectangles, ellipses and lines), which stay editable rather than being rasterized
-- Type tool (T): inline multiline editing in draggable, resizable paragraph boxes; font, size, color, alignment and spacing in the tool header; transform text and use it as a clipping mask
-- Eyedropper and a full color picker
+译文存放在 `Compositor/Localizable.xcstrings`（Xcode String Catalog，389 个键），工程只在 `knownRegions` 里多了一行 `"zh-Hans"`，**没有改动任何 Swift 调用点**——这样与上游 `main` 持续同步时几乎不产生冲突。
 
-### Adjustments and filters
-- Camera Raw filter: light, color, curves, color mixer, color grading, detail, optics and geometry, in a panel beside the canvas
-- Levels (with Auto), Curves, Hue/Saturation, Exposure, Gradient Map, Grain, Black & White, Color Balance and Invert
-- Gaussian Blur and Motion Blur that spread past a layer's edges
-- Add Noise, Vignette, Bloom / Glow, Tonal Contrast, Lens Correction and Remove Background
-- Live previews, limited to the selection when there is one
+覆盖范围目前是这样的：
 
-### Canvas and files
-- Multiple projects in tabs
-- Rulers (⌘R), guides dragged from them, a layout grid with adjustable spacing and subdivisions, and Snap To for guides, grid, layers and document bounds
-- Crop with snapping, ratios including 3:4 and 9:16, and Option for symmetric cropping; with a selection, the crop starts at it
-- Canvas Size, Image Size and Trim
-- Sharp high-quality downsampling when zoomed out, and a pixel grid when zoomed in
-- Import JPEG, PNG, HEIC, TIFF, SVG, camera RAW (with a develop step first) and Photoshop PSD and PSB (8-bit RGB; not CMYK). Photoshop folders, masks, blend modes, fill rectangles/ellipses, and simple horizontal text stay editable; other vectors and vertical text become pixels. A conversion report is shown before anything is applied.
-- Large documents: the memory budget scales with your Mac, and a Photoshop file too big to open has its layers cropped to the canvas instead
-- Export JPEG with a live preview (⇧⌥⌘S); Copy Merged
-- Keep working while a project saves
-- Photoshop-style keyboard shortcuts throughout, remappable in Edit > Keyboard Shortcuts
-- Drag a number's label to scrub its value, as in Photoshop
-- Automatic updates, signed and notarized
+- **已中文化**：菜单栏与各命令、工具属性栏、调整/滤镜面板的文案、大部分 tooltip 与无障碍标签。
+- **暂时仍是英文**：图层面板的右键菜单（由 AppKit 的 `NSMenuItem(title:)` 直接构造，不走 `LocalizedStringKey`）、约 30 处带插值的动态文案、9 个错误类型的提示文字（如工程损坏、导出失败的报错）、以及从变量取值而非字面量的文本。
+- 在 Xcode 里打开 `Localizable.xcstrings` 会自动抽取代码里尚未登记的键，补录的条目会以「未翻译」状态出现，填上译文即可生效。
 
-### Works with AI agents
-- AI agents and scripts can build and edit projects directly: a `.comp` is a folder of PNG layers and a manifest, and an open project updates live as it's written. See [Writing Compositor projects](docs/writing-comp-files.md)
+术语对齐 Adobe Photoshop 简体中文版：`Drop Shadow` → 投影、`Content-Aware Fill` → 内容识别填充、`Copy Merged` → 合并拷贝、`Visualize Range` → 可视化范围。`Save` 译作「存储」而非 macOS 的「保存」，因为整个应用的交互都在模仿 Photoshop。
 
-## Requirements
+## 功能
 
-- macOS 26.0 or later on a Mac with Apple silicon
-- Xcode 26 or later (to build from source)
+### 图层
 
-## Building
+- 图层与图层组，支持不透明度与 Photoshop 的全部混合模式及其排列顺序——组的透明度会压暗组内一切
+- 图层蒙版：可在画布任意位置（超出图层自身像素范围）绘制、填充、反相、模糊和羽化；可链接或取消链接，让蒙版独立变换
+- 剪贴蒙版与组蒙版
+- 调整图层：色相/饱和度、色阶、曲线、曝光、渐变映射、颗粒、黑白、色彩平衡、反相、高斯模糊、动感模糊与噪声
+- 图层效果：描边、投影、颜色叠加、内阴影、外发光、内发光，在 GPU 上渲染，随时可编辑
+- 向下合并、合并图层与合并组（⌘E）
+- 复制、就地重命名、拖拽排序与嵌套；Option 拖拽复制；图层面板有右键菜单
+- 拷贝与粘贴整个图层或组（无选区时的 ⌘C/⌘V），可在同一文档或不同文档之间，也可以跨文档拖拽
 
-Open `Compositor.xcodeproj` and run the **Compositor** scheme.
+### 变换
 
-## Releasing
+- 非破坏性的移动、缩放、旋转与翻转——无论把图像缩到多小，都保留原始分辨率
+- 自由扭曲（⌘ 拖拽控制点），按住 Shift 可锁定到某一轴
+- 同时变换多个图层或整个组
+- 吸附到画布与图层的边缘、中心，并显示对齐参考线
+- 精确输入位置、尺寸、缩放与角度，可用方向键逐步调整
+- 翻转图层与翻转画布，均支持水平与垂直
 
-`scripts/release.sh` builds a Release version, signs it with Developer ID, notarizes and staples it, and packages it into `dist/Compositor-<version>.dmg`.
+### 选区
 
-It needs, all kept outside this repository:
+- 矩形与椭圆选框、自由绘制与多边形套索，以及 Magic 工具——魔棒按颜色选取，对象工具则追踪你点击的内容（Tab 切换）
+- 选取主体，以及对任意选区的扩展、收缩与羽化
+- 添加到选区、从选区减去、移动轮廓，或移动/复制选区内的像素
+- 把图层的像素或蒙版载入选区
+- 内容识别填充，还能把图像向画布之外延展
 
-- a **Developer ID Application** certificate in the login keychain
-- notarization credentials saved with `xcrun notarytool store-credentials "compositor-notary" …`
-- [`create-dmg`](https://github.com/create-dmg/create-dmg) (`brew install create-dmg`)
+### 绘制与修图
 
-## License
+- 画笔工具：可调大小、硬度、不透明度与平滑度，分绘制与擦除两种模式（B 与 E），Shift 画直线
+- 修复画笔（内容识别）
+- 仿制图章，对齐或不对齐，可取样单个图层或全部图层
+- 模糊工具，可用于像素或蒙版
+- 渐变工具与形状工具（矩形、圆角矩形、椭圆和直线），保持可编辑而不会被栅格化
+- 文字工具（T）：可在可拖拽、可调整大小的段落框内直接进行多行编辑；字体、字号、颜色、对齐与间距都在工具属性栏；文字可变换，也可作为剪贴蒙版
+- 吸管与完整的取色器
 
-MIT — see [LICENSE](LICENSE).
+### 调整与滤镜
+
+- Camera Raw 滤镜：光影、颜色、曲线、混色器、颜色分级、细节、光学与几何，面板位于画布旁
+- 色阶（含自动色阶）、曲线、色相/饱和度、曝光、渐变映射、颗粒、黑白、色彩平衡与反相
+- 高斯模糊与动感模糊，都能向外扩散到图层边缘之外
+- 添加噪声、晕影、泛光 / 发光、色调对比、镜头校正与移除背景
+- 实时预览；若有选区则只作用于选区
+
+### 画布与文件
+
+- 多标签页打开多个项目
+- 标尺（⌘R）、从标尺拖出参考线、可调整间隔与细分的布局网格，以及可对齐到参考线、网格、图层和文档边界
+- 裁剪带吸附，支持 3:4、9:16 等比例，Option 可对称裁剪；有选区时裁剪框从选区开始
+- 画布大小、图像大小与裁边
+- 缩小查看时清晰的高质量降采样，放大查看时显示像素网格
+- 导入 JPEG、PNG、HEIC、TIFF、SVG、相机 RAW（先经过一步原始图像处理）以及 Photoshop 的 PSD 与 PSB（8 位 RGB，不支持 CMYK）。Photoshop 的组、蒙版、混合模式、填充矩形/椭圆和简单的横排文字会保持可编辑；其他矢量与竖排文字会转为像素。应用之前会先显示一份转换报告
+- 大文档：内存预算随你的 Mac 容量调整；大到无法打开的 Photoshop 文件会把图层裁切到画布范围
+- 导出带实时预览的 JPEG（⇧⌥⌘S）、合并拷贝
+- 项目保存的同时可以继续工作
+- 通篇采用 Photoshop 风格快捷键，可在「编辑 › 键盘快捷键」中自定义
+- 像 Photoshop 那样拖动数字标签来擦取其值
+- 自动更新（由原作者签名并公证；本分支的构建目前仍订阅上游的更新源，见下文）
+
+### 可与 AI 代理协作
+
+- AI 代理和脚本可以直接创建、编辑项目：`.comp` 就是一个装着 PNG 图层和一份清单文件的文件夹，而打开中的项目会随写入实时更新。参见[编写 Compositor 项目](docs/writing-comp-files.md)
+
+## 系统要求
+
+- macOS 26.0 或更高，Apple silicon 的 Mac
+- Xcode 26 或更高（从源码构建时）
+
+## 发布
+
+`scripts/release.sh` 会构建 Release 版本、用 Developer ID 签名、公证并装订，最后打包成 `dist/Compositor-<version>.dmg`。
+
+它需要以下材料，且都不存放在仓库里：
+
+- 登录钥匙串中的一张 **Developer ID Application** 证书
+- 用 `xcrun notarytool store-credentials "compositor-notary" …` 保存的公证凭据
+- [`create-dmg`](https://github.com/create-dmg/create-dmg)（`brew install create-dmg`）
+
+**本分支需要注意**：`Config/Info.plist` 里的 `SUFeedURL` 仍指向上游的 `appcast.xml`，`SUPublicEDKey` 也是原作者的密钥。也就是说，由本仓库构建出的 App 会检查并接收**上游**的更新，而你无法用自己的密钥为它签发可被接受的更新。若要建立独立更新通道，需要同时替换订阅地址、重新生成 EdDSA 密钥对并改写 `scripts/publish.sh`。
+
+## 许可
+
+MIT — 见 [LICENSE](LICENSE)。上游版权归 Robbie Tilton 所有；本仓库的中文界面改动同样以 MIT 授权。
