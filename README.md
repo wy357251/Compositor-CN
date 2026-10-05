@@ -38,13 +38,17 @@ brew install --cask robbietilton-compositor
 defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 ```
 
-译文存放在 `Compositor/Localizable.xcstrings`（Xcode String Catalog，389 个键），工程只在 `knownRegions` 里多了一行 `"zh-Hans"`，**没有改动任何 Swift 调用点**——这样与上游 `main` 持续同步时几乎不产生冲突。
+译文存放在 `Compositor/Localizable.xcstrings`（Xcode String Catalog，472 个键），工程在 `knownRegions` 里注册了 `"zh-Hans"`。绝大部分界面靠 SwiftUI 的 `LocalizedStringKey` 自动生效，不需要改代码；只有少数地方加了改动，见下。
 
 覆盖范围目前是这样的：
 
-- **已中文化**：菜单栏与各命令、工具属性栏、调整/滤镜面板的文案、大部分 tooltip 与无障碍标签。
-- **暂时仍是英文**：图层面板的右键菜单（由 AppKit 的 `NSMenuItem(title:)` 直接构造，不走 `LocalizedStringKey`）、约 30 处带插值的动态文案、9 个错误类型的提示文字（如工程损坏、导出失败的报错）、以及从变量取值而非字面量的文本。
-- 在 Xcode 里打开 `Localizable.xcstrings` 会自动抽取代码里尚未登记的键，补录的条目会以「未翻译」状态出现，填上译文即可生效。
+- **已中文化**：菜单栏与全部命令（含「滤镜」子菜单、「新建调整图层」子菜单）、编辑菜单里的撤销 / 重做动作名、工具属性栏、调整与滤镜面板、导出与画布类对话框、大部分 tooltip 与无障碍标签。
+- **暂时仍是英文**：图层面板的右键菜单（由 AppKit 的 `NSMenuItem(title:)` 直接构造，不走 `LocalizedStringKey`）、约 30 处带插值的动态文案、9 个错误类型的提示文字（如工程损坏、导出失败的报错）。
+- **故意保持英文**：图层的默认名（`Layer 1`、形状与滤镜产生的图层名）。这些会被写进 `.comp` 工程文件，属于文档内容而不是界面文字，本地化会让分支的工程与上游不一致。
+
+菜单与撤销标题原先显示的是枚举的 `rawValue`（`Gaussian Blur`、`Add Noise` 等），而 `AdjustmentKind` 的 `rawValue` 同时是写进工程文件的存档键，不能改。所以给 `FilterKind`、`AdjustmentKind`、`LayerEffectKind` 各加了一层只用于显示的 `displayName`，`rawValue` 原样保留；撤销标题则在 `EditorSession.beginEdit` 里统一查一次表，这样各处传入的英文动作名会自动跟随界面语言，而测试断言的是 `localizedString("…")`，与界面语言无关。
+
+在 Xcode 里打开 `Localizable.xcstrings` 会自动抽取代码里尚未登记的键，补录的条目以「未翻译」状态出现，填上译文即可生效。
 
 术语对齐 Adobe Photoshop 简体中文版：`Drop Shadow` → 投影、`Content-Aware Fill` → 内容识别填充、`Copy Merged` → 合并拷贝、`Visualize Range` → 可视化范围。`Save` 译作「存储」而非 macOS 的「保存」，因为整个应用的交互都在模仿 Photoshop。
 
