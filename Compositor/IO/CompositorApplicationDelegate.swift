@@ -6,8 +6,8 @@ final class CompositorApplicationDelegate: NSObject, NSApplicationDelegate {
     var session: EditorSession { workspace.current.session }
     var projects: ProjectController { workspace.current.controller }
     var showEditor: (() -> Void)?
-    /// Checks the update feed and installs new versions (Sparkle). Started only after launch: its first-run prompt,
-    /// shown during launch, kept the editor window from ever opening.
+    /// Checks the update feed and installs new versions (Sparkle), from "Check for Updates…" only: this fork
+    /// publishes no feed of its own, so nothing starts polling at launch.
     let updater = SPUStandardUpdaterController(startingUpdater: false, updaterDelegate: nil, userDriverDelegate: nil)
 
     // Finder Open With and Dock drops, including files delivered during launch.
@@ -36,10 +36,6 @@ final class CompositorApplicationDelegate: NSObject, NSApplicationDelegate {
         NSApp.appearance = NSAppearance(named: .darkAqua)
         // Slider knobs snap to a click on the track instead of gliding there.
         SliderSnap.install()
-    }
-
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [updater] in updater.startUpdater() }
     }
 
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
