@@ -20,7 +20,9 @@ xcodebuild -project Compositor.xcodeproj -scheme Compositor \
   -destination 'platform=macOS,arch=arm64' -configuration Release build
 ```
 
-本仓库目前不提供自己的 Release 产物（`.dmg`、签名与公证都在原作者手里）。想要开箱即用的版本，请安装上游发行版：[robbietilton.com/compositor](https://robbietilton.com/compositor)，或 Homebrew：
+本仓库不提供签名公证过的安装包（那需要付费的苹果开发者账号），但可以从源码自行打包一个未签名 DMG，见下文[打包与分发](#打包与分发)。
+
+想要开箱即用的版本，也可以装上游发行版：[robbietilton.com/compositor](https://robbietilton.com/compositor)，或 Homebrew：
 
 ```sh
 brew install --cask robbietilton-compositor
@@ -33,7 +35,7 @@ brew install --cask robbietilton-compositor
 界面语言跟随系统的 preferred languages：当简体中文排在首位时，构建出的 App 自动以中文显示，无需任何设置。想单独为这个 App 指定语言：
 
 ```sh
-defaults write com.wonderassembly.compositor AppleLanguages -array zh-Hans
+defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 ```
 
 译文存放在 `Compositor/Localizable.xcstrings`（Xcode String Catalog，389 个键），工程只在 `knownRegions` 里多了一行 `"zh-Hans"`，**没有改动任何 Swift 调用点**——这样与上游 `main` 持续同步时几乎不产生冲突。
@@ -118,17 +120,39 @@ defaults write com.wonderassembly.compositor AppleLanguages -array zh-Hans
 - macOS 26.0 或更高，Apple silicon 的 Mac
 - Xcode 26 或更高（从源码构建时）
 
-## 发布
+## 打包与分发
 
-`scripts/release.sh` 会构建 Release 版本、用 Developer ID 签名、公证并装订，最后打包成 `dist/Compositor-<version>.dmg`。
+### 未签名包（本仓库目前的做法）
 
-它需要以下材料，且都不存放在仓库里：
+```sh
+./scripts/package-unsigned.sh      # → dist/Compositor-<version>-unsigned.dmg
+```
+
+Release 构建 + ad-hoc 签名 + `hdiutil` 造盘：不需要任何苹果账号，也不依赖 `create-dmg`（后者靠 Finder/AppleScript 排图标，在无头环境里不稳）。脚本还会检查 `zh-Hans.lproj` 确实进了包——中文丢了却发出一个能用的 DMG，是很难察觉的回归。
+
+**接收方必须知道的一件事**：浏览器下载的文件会被打上 quarantine 属性，而这个包没有 Developer ID 签名、也没经过苹果公证，Gatekeeper 会拦住。装好后执行一次：
+
+```sh
+xattr -dr com.apple.quarantine "/Applications/Compositor.app"
+```
+
+或在 Finder 里右键 App → 「打开」。在放 DMG 链接的地方务必写上这句提示，否则多数人以为下载的文件坏了。
+
+### 签名与公证
+
+`scripts/release.sh` 是完整链路：archive → Developer ID 签名 → 公证并装订 → 打包成 `dist/Compositor-<version>.dmg`。它需要以下材料，且都不存放在仓库里：
 
 - 登录钥匙串中的一张 **Developer ID Application** 证书
 - 用 `xcrun notarytool store-credentials "compositor-notary" …` 保存的公证凭据
 - [`create-dmg`](https://github.com/create-dmg/create-dmg)（`brew install create-dmg`）
 
-**本分支需要注意**：`Config/Info.plist` 里的 `SUFeedURL` 仍指向上游的 `appcast.xml`，`SUPublicEDKey` 也是原作者的密钥。也就是说，由本仓库构建出的 App 会检查并接收**上游**的更新，而你无法用自己的密钥为它签发可被接受的更新。若要建立独立更新通道，需要同时替换订阅地址、重新生成 EdDSA 密钥对并改写 `scripts/publish.sh`。
+脚本里的 `TEAM`、`IDENTITY`、`NOTARY_PROFILE` 仍是原作者的值，换成你自己的 Apple Developer Program 账号（付费 $99/年）后改用它，才能产出双击即装的包。`scripts/publish.sh` 的发布目标已指向本仓库（可用 `REPO=owner/name` 覆盖）。
+
+### 自动更新
+
+本分支不检查更新：`SUEnableAutomaticChecks` 置为 false，启动时不再调用 `startUpdater()`，`SUFeedURL` 指向本仓库，而仓库里的 `appcast.xml` 是一个空的 feed。这样中文构建不会被静默替换成上游英文版。菜单里的「检查更新…」会报「已是最新版本」。
+
+将来若要建立自己的更新通道，需要生成自己的 EdDSA 密钥对、替换 `SUPublicEDKey`，并用 `scripts/publish.sh` 发布签名后的包。
 
 ## 许可
 
