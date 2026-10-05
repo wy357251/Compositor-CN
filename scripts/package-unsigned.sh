@@ -24,14 +24,24 @@ mkdir -p "$WORK" "$DIST"
 
 echo "==> Building Release, signed ad-hoc"
 # Manual style with the ad-hoc identity, so the Release configuration's Developer ID team is not consulted.
+# Hardened runtime must go with it: it turns on strict library validation, which demands that the host and every
+# loaded library share a signing identity. Two ad-hoc signatures never do — each is its own cdhash — so a
+# hardened ad-hoc build dies at launch when dyld reaches for Sparkle.framework. Xcode already drops the flag
+# for Debug; Release sets it, so the override has to say so here.
 xcodebuild build -quiet \
   -project "$PROJECT_DIR/$APP.xcodeproj" -scheme "$APP" -configuration Release \
   -destination "generic/platform=macOS" -derivedDataPath "$WORK/DerivedData" \
-  CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM=
+  CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=- DEVELOPMENT_TEAM= ENABLE_HARDENED_RUNTIME=NO
 
 APP_PATH="$WORK/DerivedData/Build/Products/Release/$APP.app"
 [[ -d "$APP_PATH" ]] || { echo "No $APP_PATH — the build did not produce it."; exit 1; }
 codesign --verify --strict --verbose=1 "$APP_PATH"
+
+flags=$(codesign -dvvv "$APP_PATH" 2>&1 | awk -F'flags=' '/CodeDirectory/{print $2; exit}')
+case "$flags" in
+  *runtime*) echo "Hardened runtime is still on ($flags) — the app would crash at launch on Sparkle.framework."; exit 1 ;;
+esac
+echo "    ad-hoc without hardened runtime ($flags)"
 
 echo "==> Checking the resources made it in"
 # The Chinese UI is the point of this fork; a DMG that ships without it is a silent regression.
