@@ -113,6 +113,22 @@
         }
       }
     },
+    "Add Mask": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Mask"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "添加蒙版"
+          }
+        }
+      }
+    },
     "Add Noise": {
       "localizations": {
         "en": {
@@ -1697,6 +1713,38 @@
         }
       }
     },
+    "Delete Mask": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Mask"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除蒙版"
+          }
+        }
+      }
+    },
+    "Delete Selected Layers": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Selected Layers"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "删除所选图层"
+          }
+        }
+      }
+    },
     "Deselect": {
       "localizations": {
         "en": {
@@ -1757,6 +1805,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "停用图层蒙版"
+          }
+        }
+      }
+    },
+    "Disable Mask": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disable Mask"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "停用蒙版"
           }
         }
       }
@@ -2237,6 +2301,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "启用镜头配置文件校正"
+          }
+        }
+      }
+    },
+    "Enable Mask": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable Mask"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "启用蒙版"
           }
         }
       }
@@ -3101,6 +3181,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "隐藏%@"
+          }
+        }
+      }
+    },
+    "Hide All (Black)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hide All (Black)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全部隐藏（黑色）"
           }
         }
       }
@@ -4129,6 +4225,22 @@
         }
       }
     },
+    "Link Mask": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Link Mask"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "链接蒙版"
+          }
+        }
+      }
+    },
     "Liquify pushes pixels · Blur softens · Smudge drags color along": {
       "localizations": {
         "en": {
@@ -4349,6 +4461,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "中等对比度"
+          }
+        }
+      }
+    },
+    "Merge Down": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge Down"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "向下合并"
+          }
+        }
+      }
+    },
+    "Merge Group": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge Group"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并组"
+          }
+        }
+      }
+    },
+    "Merge Layers": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Merge Layers"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "合并图层"
           }
         }
       }
@@ -5809,6 +5969,22 @@
         }
       }
     },
+    "Rename…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "重命名…"
+          }
+        }
+      }
+    },
     "Reorder Layers": {
       "localizations": {
         "en": {
@@ -5965,6 +6141,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "恢复默认值"
+          }
+        }
+      }
+    },
+    "Reveal All (White)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reveal All (White)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "全部显示（白色）"
           }
         }
       }
@@ -7197,6 +7389,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "取消链接图层蒙版"
+          }
+        }
+      }
+    },
+    "Unlink Mask": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unlink Mask"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "取消链接蒙版"
           }
         }
       }

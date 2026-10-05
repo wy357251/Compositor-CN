@@ -38,15 +38,23 @@ brew install --cask robbietilton-compositor
 defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 ```
 
-译文存放在 `Compositor/Localizable.xcstrings`（Xcode String Catalog，472 个键），工程在 `knownRegions` 里注册了 `"zh-Hans"`。绝大部分界面靠 SwiftUI 的 `LocalizedStringKey` 自动生效，不需要改代码；只有少数地方加了改动，见下。
+译文存放在 `Compositor/Localizable.xcstrings`（Xcode String Catalog，485 个键），工程在 `knownRegions` 里注册了 `"zh-Hans"`。绝大部分界面靠 SwiftUI 的 `LocalizedStringKey` 自动生效，不需要改代码；只有少数地方加了改动，见下。
 
 覆盖范围目前是这样的：
 
-- **已中文化**：菜单栏与全部命令（含「滤镜」子菜单、「新建调整图层」子菜单）、编辑菜单里的撤销 / 重做动作名、工具属性栏、调整与滤镜面板、导出与画布类对话框、大部分 tooltip 与无障碍标签。
-- **暂时仍是英文**：图层面板的右键菜单（由 AppKit 的 `NSMenuItem(title:)` 直接构造，不走 `LocalizedStringKey`）、约 30 处带插值的动态文案、9 个错误类型的提示文字（如工程损坏、导出失败的报错）。
+- **已中文化**：菜单栏与全部命令（含「滤镜」子菜单、「新建调整图层」子菜单）、编辑菜单里的撤销 / 重做动作名、**图层面板的右键菜单**、工具属性栏、调整与滤镜面板、导出与画布类对话框、大部分 tooltip 与无障碍标签。
+- **暂时仍是英文**：约 30 处带插值的动态文案、9 个错误类型的提示文字（如工程损坏、导出失败的报错）。
 - **故意保持英文**：图层的默认名（`Layer 1`、形状与滤镜产生的图层名）。这些会被写进 `.comp` 工程文件，属于文档内容而不是界面文字，本地化会让分支的工程与上游不一致。
 
-菜单与撤销标题原先显示的是枚举的 `rawValue`（`Gaussian Blur`、`Add Noise` 等），而 `AdjustmentKind` 的 `rawValue` 同时是写进工程文件的存档键，不能改。所以给 `FilterKind`、`AdjustmentKind`、`LayerEffectKind` 各加了一层只用于显示的 `displayName`，`rawValue` 原样保留；撤销标题则在 `EditorSession.beginEdit` 里统一查一次表，这样各处传入的英文动作名会自动跟随界面语言，而测试断言的是 `localizedString("…")`，与界面语言无关。
+有三类文字不是 SwiftUI 字面量，得靠代码改动接上目录：
+
+1. **枚举名当标题用**。菜单与撤销标题原先显示枚举的 `rawValue`（`Gaussian Blur`、`Add Noise` 等），而 `AdjustmentKind` 的 `rawValue` 同时是写进工程文件的存档键，不能改。所以给 `FilterKind`、`AdjustmentKind`、`LayerEffectKind` 各加了一层只用于显示的 `displayName`，`rawValue` 原样保留。
+2. **AppKit 构造的菜单**。图层面板右键菜单用 `NSMenuItem(title:)`，它收的是普通 `String`，不会自动查表，所以在构造处显式走 `localizedString(_:)`。
+3. **撤销标题**。在 `EditorSession.beginEdit` 里统一查一次表，各处传入的英文动作名因此自动跟随界面语言；由名称拼出的标题（`Add %@`、`Edit %@ Adjustment`）走 `localized(_:_:)`。
+
+菜单里的 `Undo ` / `Redo ` 前缀用 `Text("Undo ") + Text(name)` 拼接，而不是字符串插值：SwiftUI 为插值生成的目录键格式无法在不开界面的情况下确认，猜错就是静默不生效，而拼接的两半都是确定的字面量键。
+
+相应地，测试里对菜单标题与撤销名的断言写成 `localizedString("…")`，只关心动作身份、不依赖界面语言。
 
 在 Xcode 里打开 `Localizable.xcstrings` 会自动抽取代码里尚未登记的键，补录的条目以「未翻译」状态出现，填上译文即可生效。
 
