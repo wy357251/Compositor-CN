@@ -28,6 +28,9 @@ nonisolated enum FilterKind: String, CaseIterable, Sendable {
         self == .curves || self == .exposure || self == .gradientMap || self == .grain
             || self == .blackWhite || self == .colorBalance
     }
+    /// The name shown to the user, in the interface language. `rawValue` stays the English identity a
+    /// filter's result layer is named with, so projects keep reading the same whatever language is set.
+    var displayName: String { localizedString(rawValue) }
 }
 
 /// Remove Background's two ways of working: Apple's own subject mask on its own, or that mask refined against the
@@ -649,7 +652,7 @@ extension EditorSession {
                                                       width: asset.image.width, height: asset.image.height) else { throw ExportError.render }
                 mask = owned.replacing(try LayerMask.asset(from: carried))
             }
-            beginEdit(edit.kind.rawValue)
+            beginEdit(edit.kind.displayName)
             document?.layers[index] = ImageLayer(id: current.id, asset: asset, name: current.name, isVisible: current.isVisible,
                 transform: made.transform ?? current.transform, parentID: current.parentID, isGroup: false,
                 opacity: current.opacity, blendMode: current.blendMode, mask: mask, maskSourceID: current.maskSourceID,
@@ -687,7 +690,7 @@ extension EditorSession {
                   let layer = document?.layers[index], layer.asset?.image === edit.original.image,
                   layer.transform == edit.transform else { return }
             let asset = try LayerMask.asset(from: made)
-            beginEdit(edit.kind.rawValue)
+            beginEdit(edit.kind.displayName)
             document?.layers[index].mask = layer.mask.map { $0.replacing(asset) } ?? LayerMask(asset: asset)
             document?.layers[index].mask?.isEnabled = true
             isMaskSelected = true

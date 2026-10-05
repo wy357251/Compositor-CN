@@ -209,14 +209,14 @@ struct LayerTests {
 
         session.deleteLayerOrMask()
         #expect(session.document?.layers.map(\.id) == [keep], "the folder, its child and the other selected layer are gone")
-        #expect(session.history.undoCount == count + 1 && session.history.undoName == "Delete Layers")
+        #expect(session.history.undoCount == count + 1 && session.history.undoName == localizedString("Delete Layers"))
         #expect(session.activeLayerID == keep && session.selectedLayerIDs == [keep])
         session.undo()
         #expect(session.document == before)
 
         session.selectLayers([keep], primary: keep)
         session.deleteLayerOrMask() // a single selection still deletes just that layer
-        #expect(session.document?.layers.contains { $0.id == keep } == false && session.history.undoName == "Delete Layer")
+        #expect(session.document?.layers.contains { $0.id == keep } == false && session.history.undoName == localizedString("Delete Layer"))
     }
 
     /// Option-dragging a layer in the Layers panel drops a duplicate where it lands, as one undo step.
@@ -230,7 +230,7 @@ struct LayerTests {
         let after = session.layerRows.map(\.layer)
         #expect(after.count == 4)
         #expect(session.history.undoCount == count + 1)
-        #expect(session.history.undoName == "Duplicate Layer")
+        #expect(session.history.undoName == localizedString("Duplicate Layer"))
         #expect(after.first?.name == "\(bottom.name) copy", "the copy lands above the top layer: \(after.map(\.name))")
         #expect(after.contains { $0.id == bottom.id }, "the original stays where it was")
         session.undo()
@@ -401,7 +401,7 @@ struct LayerTests {
         #expect(copy.name == "\(target.name) copy")
         #expect(session.activeLayerID == copy.id, "active layer is the duplicate")
         #expect(session.history.undoCount == undoCount + 1)
-        #expect(session.history.undoName == "Duplicate Layer")
+        #expect(session.history.undoName == localizedString("Duplicate Layer"))
     }
 
     @Test func testContextMenuDuplicateFolderPreservesHierarchy() throws {

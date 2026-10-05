@@ -68,7 +68,7 @@ struct HistoryTests {
         session.addBlankLayer()
         #expect(!session.canUndo)
         session.endEdit()
-        #expect(session.history.undoName == "Layer Setup")
+        #expect(session.history.undoName == localizedString("Layer Setup"))
         session.undo()
         #expect(session.document?.layers.isEmpty == true)
         session.redo()

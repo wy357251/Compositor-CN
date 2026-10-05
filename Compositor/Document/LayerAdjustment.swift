@@ -23,6 +23,9 @@ nonisolated enum AdjustmentKind: String, Codable, CaseIterable, Sendable {
         case .colorBalance: return "scale.3d"
         }
     }
+    /// The name shown to the user, in the interface language. `rawValue` is what a project file stores,
+    /// so it stays English however the interface is set.
+    var displayName: String { localizedString(rawValue) }
     /// The filter panel that edits this kind; Levels and Hue/Saturation have panels of their own.
     /// Every kind but Invert opens an editor when its layer is double-clicked.
     var isEditable: Bool { self != .invert }
@@ -197,7 +200,7 @@ extension EditorSession {
         layer.adjustment = adjustment
         layer.parentID = activeLayer?.isGroup == true ? activeLayerID : activeLayer?.parentID
         let index = document.layers.firstIndex { $0.id == activeLayerID }.map { $0 + 1 } ?? document.layers.count
-        beginEdit("New \(kind.rawValue) Adjustment")
+        beginEdit(localized("New %@ Adjustment", kind.displayName))
         self.document?.layers.insert(layer, at: index)
         if let parent = layer.parentID { collapsedGroupIDs.remove(parent) }
         activeLayerID = layer.id

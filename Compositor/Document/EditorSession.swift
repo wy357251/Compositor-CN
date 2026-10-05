@@ -1,6 +1,17 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
+/// A string from the catalog, looked up by a key only known at run time. `String(localized:)` takes a
+/// `String.LocalizationValue`, which a literal becomes at compile time but a computed key never does.
+nonisolated func localizedString(_ key: String) -> String {
+    Bundle.main.localizedString(forKey: key, value: key, table: nil)
+}
+
+/// A catalog string with `%@` filled in, for a title composed around another name.
+nonisolated func localized(_ key: String, _ arguments: CVarArg...) -> String {
+    String(format: localizedString(key), arguments: arguments)
+}
+
 struct ImageLayer: Identifiable, Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id && lhs.name == rhs.name && lhs.isVisible == rhs.isVisible && lhs.transform == rhs.transform
@@ -633,8 +644,10 @@ final class EditorSession {
     }
 
     /// Nestable transaction boundary; future tools can group a complete gesture.
+    /// The title is looked up here so every undo step reads in the interface language without each caller
+    /// saying so; a name that is already resolved — a kind's `displayName` — simply passes through.
     func beginEdit(_ name: String) {
-        history.begin(name, document: document, selection: activeLayerID)
+        history.begin(localizedString(name), document: document, selection: activeLayerID)
     }
 
     func endEdit() { history.end(document: document, selection: activeLayerID) }
