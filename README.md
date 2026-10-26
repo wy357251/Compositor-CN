@@ -42,8 +42,9 @@ defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 
 覆盖范围目前是这样的：
 
-- **已中文化**：菜单栏与全部命令（含「滤镜」子菜单、「新建调整图层」子菜单）、编辑菜单里的撤销 / 重做动作名、图层面板的右键命令、命令面板（⌘F）、工具属性栏、调整与滤镜面板、导出与画布类对话框、大部分 tooltip 与无障碍标签。
-- **暂时仍是英文**：约 37 处带插值的动态文案、9 个错误类型的提示文字（如工程损坏、导出失败的报错）、各处下拉框里的枚举取值（单位、抖动样式、光圈形状等）。
+- **已中文化**：菜单栏与全部命令（含「滤镜」子菜单、「新建调整图层」子菜单）、编辑菜单里的撤销 / 重做动作名、图层面板的右键命令与效果行、命令面板（⌘F）、工具属性栏、调整与滤镜面板、画布大小与图像大小对话框里的动态行数、导出对话框、参考线、大部分 tooltip 与 VoiceOver 标签。
+- **暂时仍是英文**：9 个错误类型的提示文字（如工程损坏、导出失败的报错）、各处下拉框里的枚举取值（单位、抖动样式、光圈形状、散景形状等，写法是 `Text($0.rawValue)`）。
+- **无需翻译**：8 处只含数字与单位的动态文案（`1,200 × 800 px`、`150%`、`40 ms · 25 fps`），两种语言写法相同。
 - **故意保持英文**：图层的默认名（`Layer 1`、形状与滤镜产生的图层名）。这些会被写进 `.comp` 工程文件，属于文档内容而不是界面文字，本地化会让分支的工程与上游不一致。
 
 有三类文字不是 SwiftUI 字面量，得靠代码改动接上目录：
@@ -51,6 +52,9 @@ defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 1. **枚举名当标题用**。菜单与撤销标题原先显示枚举的 `rawValue`（`Gaussian Blur`、`Add Noise` 等），而 `AdjustmentKind` 的 `rawValue` 同时是写进工程文件的存档键，不能改。所以给 `FilterKind`、`AdjustmentKind`、`LayerEffectKind` 各加了一层只用于显示的 `displayName`，`rawValue` 原样保留。
 2. **AppKit 构造的菜单**。图层面板右键菜单用 `NSMenuItem(title:)`，它收的是普通 `String`，不会自动查表，所以在构造处显式走 `localizedString(_:)`。
 3. **撤销标题**。在 `EditorSession.beginEdit` 里统一查一次表，各处传入的英文动作名因此自动跟随界面语言；由名称拼出的标题（`Add %@`、`Edit %@ Adjustment`）走 `localized(_:_:)`。
+4. **AppKit 的 tooltip 与 VoiceOver 标签**。`NSToolbar`/`NSButton` 的 `toolTip = "…"` 和 `setAccessibilityLabel("…")` 收的都是普通 `String`，SwiftUI 那套自动机制完全管不到，所以在赋值处走 `localizedString(_:)`。
+
+带参数的文案统一用 `localized("Current: %@ × %@ pixels", 宽, 高)`：键写死在源码里，因此可以逐条断言解析结果，不依赖 Xcode 的自动抽取（命令行构建不会抽取，只有 GUI 里构建或手动执行 Extract 才会）。两个约定：占位符一律用 `%@`，`localized` 会把参数转成 `NSString`，因为把 `Int` 直接交给 `%@` 会崩溃；译文里若出现字面的百分号，必须写成 `%%`，否则会被当成格式说明符吃掉。
 
 菜单里的 `Undo ` / `Redo ` 前缀用 `Text("Undo ") + Text(name)` 拼接，而不是字符串插值：SwiftUI 为插值生成的目录键格式无法在不开界面的情况下确认，猜错就是静默不生效，而拼接的两半都是确定的字面量键。
 
