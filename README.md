@@ -1,8 +1,8 @@
 # Compositor-CN
 
-Compositor 的简体中文分支。上游是 [robbietilton/Compositor](https://github.com/robbietilton/Compositor)——一款面向 Mac 的免费开源 Photoshop 替代品；本仓库在它的基础上加入了简体中文界面，内容基于上游 v1.4.5（build 40）。
+Compositor 的简体中文分支。上游是 [robbietilton/Compositor](https://github.com/robbietilton/Compositor)——一款面向 Mac 的免费开源图像编辑器，自称 "The Photoshop alternative for Mac"。本仓库在它的基础上加入简体中文界面，内容跟随上游 **v1.5.9**。
 
-Adobe Photoshop 太贵，而 GIMP 之类的工具又不够顺手，难以让人保持专注——这就是作者 Robbie Tilton 做 Compositor 的原因。目标是做一个功能完整的图像编辑器：他过去用 Photoshop 做合成与后期，所以 Compositor 也围绕这套工作流来设计，提供产出像素级成图所需的工具。因为开源，你可以直接拿到 Xcode 工程，按需添加、移除或修改任何功能。
+Adobe Photoshop 太贵，而 GIMP 之类的工具又不够顺手，难以让人保持专注——这是原作者 Robbie Tilton 做 Compositor 的原因。目标是做一个功能完整、完全免费开源的图像编辑器：他过去用 Photoshop 做合成与后期，所以 Compositor 围绕那套工作流设计，提供产出像素级成图所需的工具。因为开源，你可以直接拿到 Xcode 工程，按需添加、移除或修改任何功能。
 
 ## 安装
 
@@ -38,12 +38,12 @@ brew install --cask robbietilton-compositor
 defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 ```
 
-译文存放在 `Compositor/Localizable.xcstrings`（Xcode String Catalog，485 个键），工程在 `knownRegions` 里注册了 `"zh-Hans"`。绝大部分界面靠 SwiftUI 的 `LocalizedStringKey` 自动生效，不需要改代码；只有少数地方加了改动，见下。
+译文存放在 `Compositor/Localizable.xcstrings`（Xcode String Catalog，594 个键），工程在 `knownRegions` 里注册了 `"zh-Hans"`。绝大部分界面靠 SwiftUI 的 `LocalizedStringKey` 自动生效，不需要改代码；只有少数地方加了改动，见下。
 
 覆盖范围目前是这样的：
 
-- **已中文化**：菜单栏与全部命令（含「滤镜」子菜单、「新建调整图层」子菜单）、编辑菜单里的撤销 / 重做动作名、**图层面板的右键菜单**、工具属性栏、调整与滤镜面板、导出与画布类对话框、大部分 tooltip 与无障碍标签。
-- **暂时仍是英文**：约 30 处带插值的动态文案、9 个错误类型的提示文字（如工程损坏、导出失败的报错）。
+- **已中文化**：菜单栏与全部命令（含「滤镜」子菜单、「新建调整图层」子菜单）、编辑菜单里的撤销 / 重做动作名、图层面板的右键命令、命令面板（⌘F）、工具属性栏、调整与滤镜面板、导出与画布类对话框、大部分 tooltip 与无障碍标签。
+- **暂时仍是英文**：约 37 处带插值的动态文案、9 个错误类型的提示文字（如工程损坏、导出失败的报错）、各处下拉框里的枚举取值（单位、抖动样式、光圈形状等）。
 - **故意保持英文**：图层的默认名（`Layer 1`、形状与滤镜产生的图层名）。这些会被写进 `.comp` 工程文件，属于文档内容而不是界面文字，本地化会让分支的工程与上游不一致。
 
 有三类文字不是 SwiftUI 字面量，得靠代码改动接上目录：
@@ -58,7 +58,7 @@ defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 
 在 Xcode 里打开 `Localizable.xcstrings` 会自动抽取代码里尚未登记的键，补录的条目以「未翻译」状态出现，填上译文即可生效。
 
-术语对齐 Adobe Photoshop 简体中文版：`Drop Shadow` → 投影、`Content-Aware Fill` → 内容识别填充、`Copy Merged` → 合并拷贝、`Visualize Range` → 可视化范围。`Save` 译作「存储」而非 macOS 的「保存」，因为整个应用的交互都在模仿 Photoshop。
+术语对齐 Adobe Photoshop 简体中文版：`Drop Shadow` → 投影、`Content-Aware Fill` → 内容识别填充、`Copy Merged` → 合并拷贝、`Proof Colors` → 校样颜色、`Gamut Warning` → 色域警告。`Save` 译作「存储」而非 macOS 的「保存」，因为整个应用的交互都在模仿 Photoshop。
 
 ## 功能
 
@@ -67,7 +67,7 @@ defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 - 图层与图层组，支持不透明度与 Photoshop 的全部混合模式及其排列顺序——组的透明度会压暗组内一切
 - 图层蒙版：可在画布任意位置（超出图层自身像素范围）绘制、填充、反相、模糊和羽化；可链接或取消链接，让蒙版独立变换
 - 剪贴蒙版与组蒙版
-- 调整图层：色相/饱和度、色阶、曲线、曝光、渐变映射、颗粒、黑白、色彩平衡、反相、高斯模糊、动感模糊与噪声
+- 调整图层：色相/饱和度、色阶、曲线、曝光、渐变映射、颗粒、黑白、色彩平衡、反相，以及可作为图层的滤镜：高斯模糊、动感模糊、渐进模糊、噪声、晕影、泛光 / 发光、RGB 分离、镜头效果与色调对比
 - 图层效果：描边、投影、颜色叠加、内阴影、外发光、内发光，在 GPU 上渲染，随时可编辑
 - 向下合并、合并图层与合并组（⌘E）
 - 复制、就地重命名、拖拽排序与嵌套；Option 拖拽复制；图层面板有右键菜单
@@ -86,13 +86,14 @@ defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 
 - 矩形与椭圆选框、自由绘制与多边形套索，以及 Magic 工具——魔棒按颜色选取，对象工具则追踪你点击的内容（Tab 切换）
 - 选取主体，以及对任意选区的扩展、收缩与羽化
-- 添加到选区、从选区减去、移动轮廓，或移动/复制选区内的像素
+- 添加到选区、从选区减去、移动轮廓，或移动并复制选区内的像素
 - 把图层的像素或蒙版载入选区
 - 内容识别填充，还能把图像向画布之外延展
 
 ### 绘制与修图
 
 - 画笔工具：可调大小、硬度、不透明度与平滑度，分绘制与擦除两种模式（B 与 E），Shift 画直线
+- 数位板压感控制画笔的大小与不透明度
 - 修复画笔（内容识别）
 - 仿制图章，对齐或不对齐，可取样单个图层或全部图层
 - 模糊工具，可用于像素或蒙版
@@ -102,26 +103,31 @@ defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 
 ### 调整与滤镜
 
-- Camera Raw 滤镜：光影、颜色、曲线、混色器、颜色分级、细节、光学与几何，面板位于画布旁
+- Camera Raw 滤镜：光影、颜色、曲线、混色器、颜色分级、细节、光学与几何，面板位于画布旁；每个分区都能从自己的标题栏复位为默认值
 - 色阶（含自动色阶）、曲线、色相/饱和度、曝光、渐变映射、颗粒、黑白、色彩平衡与反相
 - 高斯模糊与动感模糊，都能向外扩散到图层边缘之外
-- 添加噪声、晕影、泛光 / 发光、色调对比、镜头校正与移除背景
+- 添加噪声、晕影、泛光 / 发光、抖动、扫描线、RGB 分离、镜头效果（变形镜头耀斑、星芒、雾化、棱镜，以及圆形 / 六边形 / 椭圆 / 猫眼光斑）、色调对比、镜头校正与移除背景
 - 实时预览；若有选区则只作用于选区
+- 再次滤镜（⌃F）：用同样的设置再跑一遍上一个滤镜
 
 ### 画布与文件
 
 - 多标签页打开多个项目
+- 搜索命令（⌘F）：像 Raycast 或 Obsidian 那样按名字找到每条菜单命令与工具，按 Return 执行
+- 切换全屏（F）：画布单独铺满整块黑屏，所有面板收起；再按 F 或 Esc 恢复
 - 标尺（⌘R）、从标尺拖出参考线、可调整间隔与细分的布局网格，以及可对齐到参考线、网格、图层和文档边界
 - 裁剪带吸附，支持 3:4、9:16 等比例，Option 可对称裁剪；有选区时裁剪框从选区开始
 - 画布大小、图像大小与裁边
+- 窗口高度不够时，工具栏自动排成两列
+- 导航器缩略图：300% 缩放起出现在画布角落，整体缩小显示文档并用方框标出当前视野，点击或拖动即可跳转（视图 › 导航器）
 - 缩小查看时清晰的高质量降采样，放大查看时显示像素网格
-- 导入 JPEG、PNG、HEIC、TIFF、SVG、相机 RAW（先经过一步原始图像处理）以及 Photoshop 的 PSD 与 PSB（8 位 RGB，不支持 CMYK）。Photoshop 的组、蒙版、混合模式、填充矩形/椭圆和简单的横排文字会保持可编辑；其他矢量与竖排文字会转为像素。应用之前会先显示一份转换报告
+- 导入 JPEG、PNG、HEIC、TIFF、WebP、SVG、PDF（每一页各自成一个图层，按 300 DPI 或适配画布）、动画 GIF（一个图层，其帧显示在画布下方的条带里，可播放、绘制、复制、删除与改时长）、相机 RAW（先经过一步原始图像处理）以及 Photoshop 的 PSD 与 PSB（8 位 RGB；不支持 CMYK）。每个 Photoshop 画板各自开一个标签页；图层组、蒙版、混合模式、填充矩形/椭圆和简单的横排文字保持可编辑；其他矢量与竖排文字转为像素。应用之前会先显示一份转换报告
 - 大文档：内存预算随你的 Mac 容量调整；大到无法打开的 Photoshop 文件会把图层裁切到画布范围
-- 导出带实时预览的 JPEG（⇧⌥⌘S）、合并拷贝
+- 导出 PNG（⇧⌘E）、导出 JPEG（⇧⌥⌘S），以及「导出为」（⇧⌥⌘W）支持 PNG、JPEG、按打印尺寸的单页 PDF，或在有 GIF 图层时导出动画 GIF，可缩放，带实时预览、JPEG 品质与目标体积；「导出为」里的通道包会把图层打包进 PNG 的红绿蓝与 Alpha 通道，用于游戏贴图，而 RGB 分离的「拆分到图层」能把图层还原成那四个；合并拷贝
 - 项目保存的同时可以继续工作
 - 通篇采用 Photoshop 风格快捷键，可在「编辑 › 键盘快捷键」中自定义
 - 像 Photoshop 那样拖动数字标签来擦取其值
-- 自动更新（由原作者签名并公证；本分支的构建目前仍订阅上游的更新源，见下文）
+- 自动更新（由原作者签名并公证；本分支的构建不接收上游更新，见下文）
 
 ### 可与 AI 代理协作
 
@@ -140,7 +146,7 @@ defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 ./scripts/package-unsigned.sh      # → dist/Compositor-<version>-unsigned.dmg
 ```
 
-Release 构建 + ad-hoc 签名 + `hdiutil` 造盘：不需要任何苹果账号，也不依赖 `create-dmg`（后者靠 Finder/AppleScript 排图标，在无头环境里不稳）。脚本还会检查 `zh-Hans.lproj` 确实进了包——中文丢了却发出一个能用的 DMG，是很难察觉的回归。
+Release 构建 + ad-hoc 签名 + `hdiutil` 造盘：不需要任何苹果账号，也不依赖 `create-dmg`（后者靠 Finder/AppleScript 排图标，在无头环境里不稳）。脚本还会断言 `zh-Hans.lproj` 确实进了包，并且主程序不带 hardened runtime——中文丢失或带着该标志都会发出一个能装但坏掉的 DMG，是很难察觉的回归。
 
 **接收方必须知道的一件事**：浏览器下载的文件会被打上 quarantine 属性，而这个包没有 Developer ID 签名、也没经过苹果公证，Gatekeeper 会拦住。装好后执行一次：
 
@@ -148,7 +154,7 @@ Release 构建 + ad-hoc 签名 + `hdiutil` 造盘：不需要任何苹果账号�
 xattr -dr com.apple.quarantine "/Applications/Compositor.app"
 ```
 
-或在 Finder 里右键 App → 「打开」。在放 DMG 链接的地方务必写上这句提示，否则多数人以为下载的文件坏了。
+或在 系统设置 › 隐私与安全性 里点「仍要打开」，也可以在 Finder 里右键 App → 「打开」。在放 DMG 链接的地方务必写上这句提示，否则多数人以为下载的文件坏了。
 
 ### 签名与公证
 
@@ -162,9 +168,13 @@ xattr -dr com.apple.quarantine "/Applications/Compositor.app"
 
 ### 自动更新
 
-本分支不检查更新：`SUEnableAutomaticChecks` 置为 false，启动时不再调用 `startUpdater()`，`SUFeedURL` 指向本仓库，而仓库里的 `appcast.xml` 是一个空的 feed。这样中文构建不会被静默替换成上游英文版。菜单里的「检查更新…」会报「已是最新版本」。
+本分支不接收上游更新：`SUFeedURL` 指向本仓库，而仓库里的 `appcast.xml` 是一个空的 feed，`SUEnableAutomaticChecks` 也已关闭。若沿用上游的订阅地址与公钥，中文构建会在后台把上游英文版当成合法更新装上，界面被悄悄替换。菜单里的「检查更新…」会报「已是最新版本」。
 
 将来若要建立自己的更新通道，需要生成自己的 EdDSA 密钥对、替换 `SUPublicEDKey`，并用 `scripts/publish.sh` 发布签名后的包。
+
+## 关于上游不接受翻译贡献
+
+上游 README 的 Translations 一节写明：Compositor 目前只有英文，**不接受翻译 PR**，因为项目由一人维护，每个新字符串此后都要持续翻译，而作者无法审阅自己不懂的语言。因此本仓库的中文界面只能以独立分支的形式维护——这也是它把改动尽量集中在一个 String Catalog、并让测试不依赖界面语言的原因。
 
 ## 许可
 
