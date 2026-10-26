@@ -39,7 +39,7 @@ struct CameraRawCurveControls: View {
                 amount("Shadows", \.shadows, "Lifts or lowers the darkest tones.")
             } else {
                 if let point = selectedPoint {
-                    Text("In \(Int((point.x * 255).rounded()))   Out \(Int((point.y * 255).rounded()))")
+                    Text(verbatim: localized("In %@   Out %@", Int((point.x * 255).rounded()), Int((point.y * 255).rounded())))
                         .font(.caption.monospacedDigit())
                         .foregroundStyle(.secondary)
                         .help("Input and output of the selected curve point.")
@@ -348,7 +348,7 @@ struct CameraRawMixerControls: View {
                         .overlay { Circle().stroke(edit?.cameraRawMixerSwatch == index ? Color.white : Color.clear, lineWidth: 2) }
                 }
                 .buttonStyle(.plain)
-                .help("Edit \(CameraRawMixerSettings.names[index]).")
+                .help(Text(verbatim: localized("Edit %@.", CameraRawMixerSettings.names[index])))
             }
         }
     }

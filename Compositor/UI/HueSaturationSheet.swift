@@ -88,7 +88,7 @@ struct HueSaturationSheet: View {
                     .background(session.hueSampleMode == mode ? Color.accentColor.opacity(0.25) : .clear,
                                 in: RoundedRectangle(cornerRadius: 4))
                     .help(mode.help)
-                    .accessibilityLabel("\(mode.rawValue) color")
+                    .accessibilityLabel(Text(verbatim: localized("%@ color", localizedString(mode.rawValue))))
                 }
                 Divider().frame(height: 16)
             }

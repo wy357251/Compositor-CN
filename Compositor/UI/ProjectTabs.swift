@@ -369,8 +369,8 @@ private struct ProjectTabButton: View {
                         .frame(width: 16, height: 28)
                         .padding(.trailing, 5)
                         .contentShape(Rectangle())
-                }.buttonStyle(.plain).help("Close \(tab.title)").disabled(!workspace.canSwitch)
-                    .accessibilityLabel("Close \(tab.title)")
+                }.buttonStyle(.plain).help(Text(verbatim: localized("Close %@", tab.title))).disabled(!workspace.canSwitch)
+                    .accessibilityLabel(Text(verbatim: localized("Close %@", tab.title)))
             }
         }
         .frame(height: 28)

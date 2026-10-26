@@ -67,8 +67,8 @@ struct CanvasSizeSheet: View {
     @ViewBuilder private var sheet: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Canvas Size").font(.title2.bold())
-            Text("Current: \(draft.originalWidth) × \(draft.originalHeight) pixels")
-            Text("\(bytes(draft.originalWidth, draft.originalHeight)) uncompressed RGBA canvas")
+            Text(verbatim: localized("Current: %@ × %@ pixels", draft.originalWidth, draft.originalHeight))
+            Text(verbatim: localized("%@ uncompressed RGBA canvas", bytes(draft.originalWidth, draft.originalHeight)))
                 .font(.callout).foregroundStyle(.secondary)
             Divider()
             Picker("Units", selection: $draft.unit) {
@@ -90,10 +90,10 @@ struct CanvasSizeSheet: View {
                     if locked { draft.set(draft.displayed(widthAxis: true), widthAxis: true) }
                 }
             if draft.valid {
-                Text("New: \(Int(draft.width.rounded())) × \(Int(draft.height.rounded())) pixels · \(bytes(Int(draft.width.rounded()), Int(draft.height.rounded()))) uncompressed")
+                Text(verbatim: localized("New: %@ × %@ pixels · %@ uncompressed", Int(draft.width.rounded()), Int(draft.height.rounded()), bytes(Int(draft.width.rounded()), Int(draft.height.rounded()))))
                     .font(.callout).foregroundStyle(.secondary)
             } else {
-                Text("Final dimensions must be 1–\(DocumentLimits.maxSide.formatted()) pixels per side.")
+                Text(verbatim: localized("Final dimensions must be 1–%@ pixels per side.", DocumentLimits.maxSide.formatted()))
                     .font(.callout).foregroundStyle(.orange)
             }
             HStack(alignment: .top, spacing: 24) {

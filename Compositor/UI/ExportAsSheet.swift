@@ -120,10 +120,10 @@ struct ExportAsSheet: View {
                     .help("Show the whole image (⌘0)")
                 Button { zoomBy(1) } label: { Image(systemName: "plus.magnifyingglass") }
                     .disabled(JPEGPreview.step(from: shownZoom, in: 1) == nil)
-                    .help("Zoom in (⌘+), now \(percent). At 100% each pixel of the export is one pixel of the screen")
+                    .help(Text(verbatim: localized("Zoom in (⌘+), now %@. At full size each pixel of the export is one pixel of the screen", percent)))
                 Button { zoomBy(-1) } label: { Image(systemName: "minus.magnifyingglass") }
                     .disabled(JPEGPreview.step(from: shownZoom, in: -1) == nil)
-                    .help("Zoom out (⌘−), now \(percent)")
+                    .help(Text(verbatim: localized("Zoom out (⌘−), now %@", percent)))
             }
             .padding(.bottom, -8)
             ZStack {
@@ -406,7 +406,9 @@ struct ExportAsSheet: View {
             .pickerStyle(.inline).labelsHidden()
         }
         .menuStyle(.button).fixedSize()
-        .help("Other formats: TIFF, PDF and GIF\(others.contains(.exr) ? ", EXR to keep light brighter than white" : ""), and Channel Pack for game textures")
+        .help(Text(verbatim: others.contains(.exr)
+            ? localizedString("Other formats: TIFF, PDF, GIF and EXR, which keeps light brighter than white, and Channel Pack for game textures")
+            : localizedString("Other formats: TIFF, PDF and GIF, and Channel Pack for game textures")))
         if chosen { menu.buttonStyle(.borderedProminent) } else { menu.buttonStyle(.bordered) }
     }
 
@@ -422,7 +424,7 @@ struct ExportAsSheet: View {
             }
         }
         .labelsHidden().frame(width: 260)
-        .help("What fills the \(channel.rawValue.lowercased()) channel: a layer or group read as grayscale, or solid black or white")
+        .help(Text(verbatim: localized("What fills the %@ channel: a layer or group read as grayscale, or solid black or white", localizedString(channel.rawValue))))
     }
 
     private func sizeField(_ value: Int, set: @escaping (Int) -> Void) -> some View {

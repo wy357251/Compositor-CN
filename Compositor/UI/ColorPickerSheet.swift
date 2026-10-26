@@ -93,7 +93,7 @@ struct ColorPickerSheet: View {
             hsb.hue = (1 - min(1, max(0, value.location.y / fieldSize))) * 360
         })
         .accessibilityLabel("Hue")
-        .accessibilityValue("\(Int(hsb.hue.rounded())) degrees")
+        .accessibilityValue(Text(verbatim: localized("%@ degrees", Int(hsb.hue.rounded()))))
     }
 
     private var preview: some View {

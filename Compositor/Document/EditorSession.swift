@@ -7,9 +7,10 @@ nonisolated func localizedString(_ key: String) -> String {
     Bundle.main.localizedString(forKey: key, value: key, table: nil)
 }
 
-/// A catalog string with `%@` filled in, for a title composed around another name.
-nonisolated func localized(_ key: String, _ arguments: CVarArg...) -> String {
-    String(format: localizedString(key), arguments: arguments)
+/// A catalog string with `%@` filled in, for a title composed around another name. Every placeholder is `%@`,
+/// so arguments are stringified: handing an `Int` to `%@` as a `CVarArg` crashes rather than printing it.
+nonisolated func localized(_ key: String, _ arguments: Any...) -> String {
+    String(format: localizedString(key), arguments: arguments.map { "\($0)" as NSString })
 }
 
 struct ImageLayer: Identifiable, Equatable {

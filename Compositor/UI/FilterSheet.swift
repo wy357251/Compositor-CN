@@ -521,8 +521,8 @@ struct GradientMapControls: View {
                     .contentShape(shape)
             }
             .buttonStyle(.plain)
-            .help("Choose the \(title.lowercased()) color")
-            .accessibilityLabel("\(title) color")
+            .help(Text(verbatim: localized("Choose the %@ color", localizedString(title))))
+            .accessibilityLabel(Text(verbatim: localized("%@ color", localizedString(title))))
             Text(title)
         }
     }
