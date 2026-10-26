@@ -8,6 +8,10 @@ import Testing
 ///
 /// Two failures a green suite used to hide: a translation whose bare `%` the format routine eats, and a `%@` handed
 /// an `Int`, which ends the process — Canvas Size and Image Size both crashed on opening while every other test passed.
+/// Whether the app host resolved Chinese. CI's runners are English, and only the two tests that ask the running app
+/// what it shows depend on it; the table checks read a named localization and hold either way.
+private let hostSpeaksChinese = localizedString("Exposure") != "Exposure"
+
 @MainActor
 struct LocalizationTests {
     /// A compiled table, read by localization rather than by the interface language, so the checks say the same thing
@@ -72,7 +76,7 @@ struct LocalizationTests {
         }
     }
 
-    @Test func theInterpolatedDialogLinesHoldTheirNumbers() {
+    @Test(.enabled(if: hostSpeaksChinese)) func theInterpolatedDialogLinesHoldTheirNumbers() {
         // Canvas Size's and Image Size's lines, with the `Int` arguments they really take.
         #expect(localized("Current: %@ × %@ pixels", 400, 300).contains("400"))
         #expect(localized("New: %@ × %@ pixels · %@ uncompressed", 800, 600, "1.83 MB").contains("800"))
@@ -82,7 +86,7 @@ struct LocalizationTests {
         #expect(localized("%@. Double-click to reset.", localizedString("Exposure")).count > 2)
     }
 
-    @Test func labelsThatReachTheUIThroughAVariableAreTranslated() {
+    @Test(.enabled(if: hostSpeaksChinese)) func labelsThatReachTheUIThroughAVariableAreTranslated() {
         // Neither `Text(aString)` nor `.help(aString)` nor AppKit's `toolTip` looks anything up, so these all ride on
         // a lookup made on the way in: Canvas Size's anchor grid, and the slider titles and tips a sheet's own
         // helper takes as a `String` argument.
