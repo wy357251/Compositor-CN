@@ -6,8 +6,9 @@ import Testing
 
 /// The String Catalog and the dialogs it fills, both checked inside the app host.
 ///
-/// Two failures a green suite used to hide: a translation whose bare `%` the format routine eats, and a `%@` handed
-/// an `Int`, which ends the process — Canvas Size and Image Size both crashed on opening while every other test passed.
+/// Two failures a green suite used to hide: a bare `%` in a translation, which the format routine eats, and a `%@`
+/// handed an `Int`, which ends the process — Canvas Size and Image Size opened that way while every other test passed.
+
 /// Whether the app host resolved Chinese. CI's runners are English, and only the two tests that ask the running app
 /// what it shows depend on it; the table checks read a named localization and hold either way.
 private let hostSpeaksChinese = localizedString("Exposure") != "Exposure"
@@ -82,8 +83,8 @@ struct LocalizationTests {
         #expect(localized("New: %@ × %@ pixels · %@ uncompressed", 800, 600, "1.83 MB").contains("800"))
         #expect(localized("Final dimensions must be 1–%@ pixels per side.", 30_000).contains("30"))
         #expect(localized("%@ uncompressed RGBA canvas", "1.83 MB").contains("1.83"))
-        #expect(localized("%@ of %@.", localizedString("Hue"), localizedString("Reds")).count > 2)
-        #expect(localized("%@. Double-click to reset.", localizedString("Exposure")).count > 2)
+        #expect(!localized("%@ of %@.", localizedString("Hue"), localizedString("Reds")).contains("%@"))
+        #expect(localized("%@. Double-click to reset.", localizedString("Exposure")).contains(localizedString("Exposure")))
     }
 
     @Test(.enabled(if: hostSpeaksChinese)) func labelsThatReachTheUIThroughAVariableAreTranslated() {
