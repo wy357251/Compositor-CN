@@ -529,6 +529,22 @@
         }
       }
     },
+    "Align": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Align"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "对齐"
+          }
+        }
+      }
+    },
     "Align ": {
       "localizations": {
         "en": {
@@ -541,6 +557,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "对齐 "
+          }
+        }
+      }
+    },
+    "Align %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Align %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按%@对齐"
           }
         }
       }
@@ -1293,6 +1325,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "底部"
+          }
+        }
+      }
+    },
+    "Bottom Edges": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bottom Edges"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "下边缘"
           }
         }
       }
@@ -3137,6 +3185,38 @@
         }
       }
     },
+    "Custom ratio": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom ratio"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自定义比例"
+          }
+        }
+      }
+    },
+    "Custom…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Custom…"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "自定义…"
+          }
+        }
+      }
+    },
     "Cut": {
       "localizations": {
         "en": {
@@ -3725,6 +3805,54 @@
           "stringUnit": {
             "state": "translated",
             "value": "变形"
+          }
+        }
+      }
+    },
+    "Distribute": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distribute"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "分布"
+          }
+        }
+      }
+    },
+    "Distribute %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distribute %@"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按%@分布"
+          }
+        }
+      }
+    },
+    "Distribute %@ (three or more layers)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Distribute %@ (three or more layers)"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "按%@分布（需三个或以上图层）"
           }
         }
       }
@@ -4413,6 +4541,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "色相范围的结束角度（单位：度）。"
+          }
+        }
+      }
+    },
+    "Enter a positive ratio within the document size limits.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a positive ratio within the document size limits."
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请输入不超过文档尺寸上限的正数比例。"
           }
         }
       }
@@ -6033,6 +6177,38 @@
         }
       }
     },
+    "Horizontal Centers": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Horizontal Centers"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "水平中心"
+          }
+        }
+      }
+    },
+    "Horizontal Spacing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Horizontal Spacing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "水平间距"
+          }
+        }
+      }
+    },
     "Horizontal ruler": {
       "localizations": {
         "en": {
@@ -6369,6 +6545,22 @@
         }
       }
     },
+    "How fine the detail it sharpens: small for crisp texture, larger for a punchier look": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How fine the detail it sharpens: small for crisp texture, larger for a punchier look"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "参与锐化的细节尺度：调小保留干净的纹理，调大效果更强烈"
+          }
+        }
+      }
+    },
     "How long each frame shows": {
       "localizations": {
         "en": {
@@ -6509,6 +6701,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "曲线同时改变颜色强度的幅度。为 0 时与 Photoshop 一致；较低时只影响亮度，较高时加入更多颜色。"
+          }
+        }
+      }
+    },
+    "How strongly edges and fine detail are brought out": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How strongly edges and fine detail are brought out"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "边缘与细节被强化的程度"
           }
         }
       }
@@ -7393,6 +7601,22 @@
         }
       }
     },
+    "Left Edges": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Left Edges"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "左边缘"
+          }
+        }
+      }
+    },
     "Length": {
       "localizations": {
         "en": {
@@ -7725,6 +7949,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "行高，从基线到基线。留空或 0 表示自动：字号的 120%。"
+          }
+        }
+      }
+    },
+    "Line layers up with each other, the selection, or the canvas when one is selected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Line layers up with each other, the selection, or the canvas when one is selected"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "让图层相互对齐、对齐到选区；只选中一个图层时对齐到画布"
           }
         }
       }
@@ -11361,6 +11601,22 @@
         }
       }
     },
+    "Right Edges": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Right Edges"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "右边缘"
+          }
+        }
+      }
+    },
     "Ring": {
       "localizations": {
         "en": {
@@ -12093,6 +12349,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "形状使用前景色填充，点击可更改"
+          }
+        }
+      }
+    },
+    "Sharpen": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sharpen"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "锐化"
           }
         }
       }
@@ -13905,6 +14177,22 @@
         }
       }
     },
+    "Top Edges": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Top Edges"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "上边缘"
+          }
+        }
+      }
+    },
     "Top Left Pixel Color": {
       "localizations": {
         "en": {
@@ -14529,6 +14817,38 @@
         }
       }
     },
+    "Vertical Centers": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vertical Centers"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "垂直中心"
+          }
+        }
+      }
+    },
+    "Vertical Spacing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vertical Spacing"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "垂直间距"
+          }
+        }
+      }
+    },
     "Vertical ruler": {
       "localizations": {
         "en": {
@@ -14829,6 +15149,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "宽度（像素）；高度随之变化以保持比例"
+          }
+        }
+      }
+    },
+    "Width:Height": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Width:Height"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "宽:高"
+          }
+        }
+      }
+    },
+    "Width:height, such as 4:5 or 3:2": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Width:height, such as 4:5 or 3:2"
+          }
+        },
+        "zh-Hans": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "宽:高，例如 4:5 或 3:2"
           }
         }
       }

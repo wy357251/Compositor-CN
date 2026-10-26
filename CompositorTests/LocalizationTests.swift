@@ -96,9 +96,15 @@ struct LocalizationTests {
                     "Exposure", "Contrast", "Temperature", "Saturation", "Luminance", "Vibrance", "Clarity", "Dehaze",
                     "Texture", "Size", "Opacity", "Distance", "Angle", "Blur", "Gamma", "Reds", "Blues",
                     "Input black", "Output white", "Width", "Height", "Expand", "Contract",
-                    "Whites", "Blacks", "Highlights", "Shadows", "Masking", "Midpoint", "Roundness"] {
+                    "Whites", "Blacks", "Highlights", "Shadows", "Masking", "Midpoint", "Roundness",
+                    // 1.5.10: the align panel's icons compose their titles from enum rawValues at each call.
+                    "Sharpen", "Align", "Distribute", "Left Edges", "Right Edges", "Top Edges", "Bottom Edges",
+                    "Horizontal Centers", "Vertical Centers", "Horizontal Spacing", "Vertical Spacing",
+                    "Custom…", "Custom ratio"] {
             #expect(localizedString(key) != key, "\(key) is still English")
         }
+        #expect(localized("Align %@", localizedString("Left Edges")) != "Align Left Edges")
+        #expect(localized("Distribute %@ (three or more layers)", localizedString("Vertical Spacing")).contains(localizedString("Vertical Spacing")))
     }
 
     /// Laid out in a hosting view the way the sheet is: the body runs, so a line that crashes, crashes here.

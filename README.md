@@ -1,6 +1,6 @@
 # Compositor-CN
 
-Compositor 的简体中文分支。上游是 [robbietilton/Compositor](https://github.com/robbietilton/Compositor)——一款面向 Mac 的免费开源图像编辑器，自称 "The Photoshop alternative for Mac"。本仓库在它的基础上加入简体中文界面，内容跟随上游 **v1.5.9**。
+Compositor 的简体中文分支。上游是 [robbietilton/Compositor](https://github.com/robbietilton/Compositor)——一款面向 Mac 的免费开源图像编辑器，自称 "The Photoshop alternative for Mac"。本仓库在它的基础上加入简体中文界面，内容跟随上游 **v1.5.10**。
 
 Adobe Photoshop 太贵，而 GIMP 之类的工具又不够顺手，难以让人保持专注——这是原作者 Robbie Tilton 做 Compositor 的原因。目标是做一个功能完整、完全免费开源的图像编辑器：他过去用 Photoshop 做合成与后期，所以 Compositor 围绕那套工作流设计，提供产出像素级成图所需的工具。因为开源，你可以直接拿到 Xcode 工程，按需添加、移除或修改任何功能。
 
@@ -38,11 +38,11 @@ brew install --cask robbietilton-compositor
 defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 ```
 
-译文存放在 `Compositor/Localizable.xcstrings`（Xcode String Catalog，947 个键），工程在 `knownRegions` 里注册了 `"zh-Hans"`。绝大部分界面靠 SwiftUI 的 `LocalizedStringKey` 自动生效，不需要改代码；只有少数地方加了改动，见下。
+译文存放在 `Compositor/Localizable.xcstrings`（Xcode String Catalog，969 个键），工程在 `knownRegions` 里注册了 `"zh-Hans"`。绝大部分界面靠 SwiftUI 的 `LocalizedStringKey` 自动生效，不需要改代码；只有少数地方加了改动，见下。
 
 覆盖范围目前是这样的：
 
-- **已中文化**：菜单栏与全部命令（含「滤镜」子菜单、「新建调整图层」子菜单）、编辑菜单里的撤销 / 重做动作名、图层面板的右键命令与效果行、各处下拉框的取值（单位、形状、抖动样式、镜头效果、散景形状、Camera Raw 分区等）、命令面板（⌘F）、工具属性栏、调整与滤镜面板的参数名与其 tooltip、画布大小的锚点（左上 / 居中…）与动态行数、图像大小对话框、导出对话框、参考线、**全部 11 个错误类型的提示文字**（工程损坏、导入导出失败、选区过于复杂等），以及大部分 tooltip 与 VoiceOver 标签。
+- **已中文化**：菜单栏与全部命令（含「滤镜」子菜单、「新建调整图层」子菜单）、编辑菜单里的撤销 / 重做动作名、图层面板的右键命令与效果行、各处下拉框的取值（单位、形状、抖动样式、镜头效果、散景形状、Camera Raw 分区等）、命令面板（⌘F）、工具属性栏、调整与滤镜面板的参数名与其 tooltip、画布大小的锚点（左上 / 居中…）与动态行数、对齐与分布图层的按钮与 tooltip、图像大小对话框、导出对话框、参考线、**全部 11 个错误类型的提示文字**（工程损坏、导入导出失败、选区过于复杂等），以及大部分 tooltip 与 VoiceOver 标签。
 - **无需翻译**：裁切比例（`1:1`、`4:3`、`16:9`）、色彩缩写（`RGB`、`HSL`）与只含数字单位的动态文案（`1,200 × 800 px`、`150%`、`40 ms · 25 fps`），两种语言写法相同。
 - **故意保持英文**：图层的默认名（`Layer 1`、形状与滤镜产生的图层名）。这些会被写进 `.comp` 工程文件，属于文档内容而不是界面文字，本地化会让分支的工程与上游不一致。
 
@@ -74,7 +74,7 @@ defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 - 图层与图层组，支持不透明度与 Photoshop 的全部混合模式及其排列顺序——组的透明度会压暗组内一切
 - 图层蒙版：可在画布任意位置（超出图层自身像素范围）绘制、填充、反相、模糊和羽化；可链接或取消链接，让蒙版独立变换
 - 剪贴蒙版与组蒙版
-- 调整图层：色相/饱和度、色阶、曲线、曝光、渐变映射、颗粒、黑白、色彩平衡、反相，以及可作为图层的滤镜：高斯模糊、动感模糊、渐进模糊、噪声、晕影、泛光 / 发光、RGB 分离、镜头效果与色调对比
+- 调整图层：色相/饱和度、色阶、曲线、曝光、渐变映射、颗粒、黑白、色彩平衡、反相，以及可作为图层的滤镜：高斯模糊、动感模糊、渐进模糊、锐化、噪声、晕影、泛光 / 发光、RGB 分离、镜头效果与色调对比
 - 图层效果：描边、投影、颜色叠加、内阴影、外发光、内发光，在 GPU 上渲染，随时可编辑
 - 向下合并、合并图层与合并组（⌘E）
 - 复制、就地重命名、拖拽排序与嵌套；Option 拖拽复制；图层面板有右键菜单
@@ -88,6 +88,7 @@ defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 - 吸附到画布与图层的边缘、中心，并显示对齐参考线
 - 精确输入位置、尺寸、缩放与角度，可用方向键逐步调整
 - 翻转图层与翻转画布，均支持水平与垂直
+- 对齐与分布图层——相对彼此、选区或画布，入口在移动工具属性栏的对齐按钮与图层菜单
 
 ### 选区
 
@@ -113,7 +114,7 @@ defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 - Camera Raw 滤镜：光影、颜色、曲线、混色器、颜色分级、细节、光学与几何，面板位于画布旁；每个分区都能从自己的标题栏复位为默认值
 - 色阶（含自动色阶）、曲线、色相/饱和度、曝光、渐变映射、颗粒、黑白、色彩平衡与反相
 - 高斯模糊与动感模糊，都能向外扩散到图层边缘之外
-- 添加噪声、晕影、泛光 / 发光、抖动、扫描线、RGB 分离、镜头效果（变形镜头耀斑、星芒、雾化、棱镜，以及圆形 / 六边形 / 椭圆 / 猫眼光斑）、色调对比、镜头校正与移除背景
+- 锐化（USM 未遮蔽锐化，可调数量与半径）、添加噪声、晕影、泛光 / 发光、抖动、扫描线、RGB 分离、镜头效果（变形镜头耀斑、星芒、雾化、棱镜，以及圆形 / 六边形 / 椭圆 / 猫眼光斑）、色调对比、镜头校正与移除背景
 - 实时预览；若有选区则只作用于选区
 - 再次滤镜（⌃F）：用同样的设置再跑一遍上一个滤镜
 
@@ -166,7 +167,8 @@ xattr -dr com.apple.quarantine "/Applications/Compositor.app"
 发布交给 Actions：推一个 `v<版本>-CN` 的**附注标签**，`.github/workflows/release.yml` 就在 macos-26 上跑 `package-unsigned.sh`，把 DMG 挂起来核对编译后的 `zh-Hans.lproj/Localizable.strings` 条目与 `Localizable.xcstrings` 登记的键一一对应（源码是 JSON、发出去的是编译表，漏了哪个键不会有任何症状），然后用 `GITHUB_TOKEN` 建 Release 并上传。Release 正文取标签的注释，所以文案跟标签一起提交、不需要谁的 token：
 
 ```sh
-git tag -a -F /tmp/release-notes.md v1.5.9-CN && git push origin v1.5.9-CN
+git tag -a --cleanup=verbatim -F /tmp/release-notes.md v1.5.10-CN
+git push origin v1.5.10-CN
 ```
 
 ### 签名与公证
