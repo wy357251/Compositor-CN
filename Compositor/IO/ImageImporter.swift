@@ -64,11 +64,11 @@ nonisolated enum ImageImportError: LocalizedError {
     case unreadable, unsupported, tooLarge, tooManyFrames, locked
     var errorDescription: String? {
         switch self {
-        case .unreadable: "The image could not be read. It may be damaged or unavailable."
-        case .unsupported: "Choose a JPEG, PNG, GIF, HEIC, HEIF, TIFF, WebP, PDF, or Photoshop (PSD) file."
-        case .locked: "This PDF is password-protected. Save an unlocked copy, then import that."
-        case .tooLarge: "This import exceeds the current \(DocumentLimits.documentBudgetMegapixels)-megapixel document budget or \(DocumentLimits.maxSide.formatted())-pixel side limit."
-        case .tooManyFrames: "This animation has more than \(GIFTimelineLimits.maxFrames.formatted()) frames, which exceeds the current timeline limit."
+        case .unreadable: localizedString("The image could not be read. It may be damaged or unavailable.")
+        case .unsupported: localizedString("Choose a JPEG, PNG, GIF, HEIC, HEIF, TIFF, WebP, PDF, or Photoshop (PSD) file.")
+        case .locked: localizedString("This PDF is password-protected. Save an unlocked copy, then import that.")
+        case .tooLarge: localized("This import exceeds the current %@-megapixel document budget or %@-pixel side limit.", DocumentLimits.documentBudgetMegapixels, DocumentLimits.maxSide.formatted())
+        case .tooManyFrames: localized("This animation has more than %@ frames, which exceeds the current timeline limit.", GIFTimelineLimits.maxFrames.formatted())
         }
     }
 }

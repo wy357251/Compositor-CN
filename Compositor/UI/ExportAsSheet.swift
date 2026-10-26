@@ -144,7 +144,7 @@ struct ExportAsSheet: View {
                     // which takes the chosen one's name.
                     HStack(spacing: 12) {
                         Picker("Format", selection: $format) {
-                            ForEach([ExportFormat.jpeg, .png], id: \.self) { Text($0.rawValue).tag($0) }
+                            ForEach([ExportFormat.jpeg, .png], id: \.self) { Text(verbatim: localizedString($0.rawValue)).tag($0) }
                         }
                         .pickerStyle(.segmented).labelsHidden().fixedSize()
                         moreFormats
@@ -198,7 +198,7 @@ struct ExportAsSheet: View {
                 if format == .channelPack {
                     ForEach(Array(ChannelPack.Channel.allCases.enumerated()), id: \.offset) { index, channel in
                         GridRow {
-                            Text(channel.rawValue)
+                            Text(verbatim: localizedString(channel.rawValue))
                             channelPicker(index, channel: channel)
                         }
                     }
@@ -401,7 +401,7 @@ struct ExportAsSheet: View {
         let chosen = others.contains(format)
         let menu = Menu(chosen ? format.rawValue : "More") {
             Picker("More formats", selection: $format) {
-                ForEach(others, id: \.self) { Text($0.rawValue).tag($0) }
+                ForEach(others, id: \.self) { Text(verbatim: localizedString($0.rawValue)).tag($0) }
             }
             .pickerStyle(.inline).labelsHidden()
         }

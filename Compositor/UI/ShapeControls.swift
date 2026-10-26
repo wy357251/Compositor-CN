@@ -10,7 +10,7 @@ struct ShapeControls: View {
                 session.cancelShape()
                 session.shapeKind = kind
             })) {
-                ForEach(ShapeKind.allCases, id: \.self) { Text($0.rawValue).tag($0) }
+                ForEach(ShapeKind.allCases, id: \.self) { Text(verbatim: localizedString($0.rawValue)).tag($0) }
             }
             .pickerStyle(.segmented).labelsHidden().fixedSize()
             .help("Shift-U (or Tab) steps through Rectangle, Ellipse and Line")
@@ -52,7 +52,7 @@ struct ShapeControls: View {
                     Text("Cap")
                     Picker("Cap", selection: $session.shapeLineCap) {
                         ForEach(ShapeLineCap.allCases, id: \.self) { cap in
-                            Label { Text(cap.rawValue) } icon: { Image(nsImage: LineSample.cap(cap)) }.tag(cap)
+                            Label { Text(verbatim: localizedString(cap.rawValue)) } icon: { Image(nsImage: LineSample.cap(cap)) }.tag(cap)
                         }
                     }
                     .pickerStyle(.menu).labelsHidden().fixedSize()
