@@ -163,6 +163,12 @@ xattr -dr com.apple.quarantine "/Applications/Compositor.app"
 
 或在 系统设置 › 隐私与安全性 里点「仍要打开」，也可以在 Finder 里右键 App → 「打开」。在放 DMG 链接的地方务必写上这句提示，否则多数人以为下载的文件坏了。
 
+发布交给 Actions：推一个 `v<版本>-CN` 的**附注标签**，`.github/workflows/release.yml` 就在 macos-26 上跑 `package-unsigned.sh`，把 DMG 挂起来核对编译后的 `zh-Hans.lproj/Localizable.strings` 条目与 `Localizable.xcstrings` 登记的键一一对应（源码是 JSON、发出去的是编译表，漏了哪个键不会有任何症状），然后用 `GITHUB_TOKEN` 建 Release 并上传。Release 正文取标签的注释，所以文案跟标签一起提交、不需要谁的 token：
+
+```sh
+git tag -a -F /tmp/release-notes.md v1.5.9-CN && git push origin v1.5.9-CN
+```
+
 ### 签名与公证
 
 `scripts/release.sh` 是完整链路：archive → Developer ID 签名 → 公证并装订 → 打包成 `dist/Compositor-<version>.dmg`。它需要以下材料，且都不存放在仓库里：

@@ -1,0 +1,76 @@
+name: Release
+
+# Pushing a v<x.y.z>-CN tag publishes the ad-hoc-signed DMG that costs nothing to produce (no Developer ID, no
+# notarization), as in scripts/package-unsigned.sh. Tag with the release notes as the annotated tag's message: they
+# become the Release's body, so the copy lives with the tag rather than in a secret or a manual paste.
+
+on:
+  push:
+    tags: ['v*-CN']
+
+permissions:
+  contents: write
+
+jobs:
+  unsigned:
+    name: unsigned DMG
+    runs-on: macos-26
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # The tag's own message, which is the release notes.
+          fetch-depth: 0
+
+      - name: Select Xcode 26.6
+        run: sudo xcode-select -s /Applications/Xcode_26.6.app
+
+      - name: Resolve Swift packages
+        run: >
+          xcodebuild -resolvePackageDependencies
+          -project Compositor.xcodeproj
+          -scheme Compositor
+          -onlyUsePackageVersionsFromResolvedFile
+
+      - name: Build the DMG
+        run: scripts/package-unsigned.sh
+
+      # The catalog is edited as JSON and shipped as a compiled table, so a build can leave a key out without any
+      # symptom. Count what's in the mounted DMG against what the source registers.
+      - name: Check the Chinese table inside the DMG
+        run: |
+          set -euo pipefail
+          DMG=$(ls dist/Compositor-*-unsigned.dmg)
+          hdiutil attach "$DMG" -nobrowse -mountpoint /Volumes/check
+          python3 - <<'PY'
+          import glob, json, plistlib
+          keys = json.load(open('Compositor/Localizable.xcstrings'))['strings']
+          path = glob.glob('/Volumes/check/Compositor.app/Contents/Resources/zh-Hans.lproj/Localizable.strings')[0]
+          raw = open(path, 'rb').read()
+          text = raw.decode('utf-16') if raw[:2] in (b'\xff\xfe', b'\xfe\xff') else raw.decode('utf-8')
+          table = plistlib.loads(text.encode('utf-8'))
+          missing = [k for k in keys if k not in table]
+          print(f'{len(table)} compiled entries, {len(keys)} registered, {len(missing)} missing')
+          if missing:
+              raise SystemExit(f'not in the DMG: {missing[:5]}')
+          PY
+          hdiutil detach /Volumes/check
+
+      - name: Publish the release
+        env:
+          TAG: ${{ github.ref_name }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          DMG=$(ls dist/Compositor-*-unsigned.dmg)
+          # A lightweight tag has no message of its own, which would publish an empty release.
+          body=$(git for-each-ref --format='%(contents)' "refs/tags/$TAG")
+          [[ -n "$body" ]] || body="Compositor $TAG。首次打开需要清除隔离属性，见仓库 README 的「打包与分发」。"
+          {
+            printf '%s\n' "$body"
+            printf '\n---\n\n'
+            printf '文件 `%s`  \nSHA-256 `%s`  \n%s 字节，由这次运行在 macOS 上构建。\n' \
+              "$(basename "$DMG")" "$(shasum -a 256 "$DMG" | cut -d' ' -f1)" "$(wc -c < "$DMG" | tr -d ' ')"
+          } > notes.md
+          gh release create "$TAG" "$DMG" --title "$TAG" --notes-file notes.md --latest
