@@ -355,7 +355,7 @@ struct FilterSheet: View {
                 .contentShape(shape)
         }
         .buttonStyle(.plain)
-        .help(help)
+        .help(localizedString(help))
     }
 
     /// Lens Effects: which effect, then its own settings.
@@ -455,6 +455,7 @@ struct FilterSheet: View {
     /// A colored track draws the slider as Camera Raw's, where a double-click on the title or knob resets it.
     private func control(_ title: String, _ key: WritableKeyPath<FilterSettings, Double>, range: ClosedRange<Double>,
                          unit: String, decimals: Int, logarithmic: Bool, track: CameraRawSliderTrack? = nil) -> some View {
+        let title = localizedString(title)
         let step = pow(10, Double(decimals))
         let reset = { update { $0 = Self.resetting(key, in: $0) } }
         return HStack(spacing: 10) {
@@ -467,7 +468,7 @@ struct FilterSheet: View {
                             range: range)
             if let track {
                 CameraRawSlider(value: settings[keyPath: key], range: range, track: track,
-                                help: "\(title). Double-click to reset.",
+                                help: localized("%@. Double-click to reset.", title),
                                 onChange: { value in update { $0[keyPath: key] = (value * step).rounded() / step } },
                                 onReset: reset)
             } else {
@@ -510,6 +511,7 @@ struct GradientMapControls: View {
     private func color(_ value: AdjustmentColor) -> Color { Color(.sRGB, red: value.red, green: value.green, blue: value.blue) }
 
     private func swatch(_ title: String, _ value: AdjustmentColor, action: @escaping () -> Void) -> some View {
+        let title = localizedString(title)
         let shape = RoundedRectangle(cornerRadius: 6, style: .continuous)
         return HStack(spacing: 8) {
             Button(action: action) {
@@ -521,8 +523,8 @@ struct GradientMapControls: View {
                     .contentShape(shape)
             }
             .buttonStyle(.plain)
-            .help(Text(verbatim: localized("Choose the %@ color", localizedString(title))))
-            .accessibilityLabel(Text(verbatim: localized("%@ color", localizedString(title))))
+            .help(Text(verbatim: localized("Choose the %@ color", title)))
+            .accessibilityLabel(Text(verbatim: localized("%@ color", title)))
             Text(title)
         }
     }

@@ -62,6 +62,9 @@ struct CameraRawSlider: NSViewRepresentable {
     var range: ClosedRange<Double>
     var track: CameraRawSliderTrack
     var help: String
+    /// AppKit takes the tooltip and the accessibility label as plain strings, so the catalog lookup happens here:
+    /// a call site's `help: "…"` literal would otherwise reach the slider untranslated.
+    private var tip: String { localizedString(help) }
     var onChange: (Double) -> Void
     var onReset: () -> Void
 
@@ -78,11 +81,11 @@ struct CameraRawSlider: NSViewRepresentable {
         slider.isContinuous = true
         slider.target = context.coordinator
         slider.action = #selector(Coordinator.changed(_:))
-        slider.toolTip = help
+        slider.toolTip = tip
         slider.onReset = context.coordinator.reset
         slider.onTrackClick = context.coordinator.onChange
         (slider.cell as? GradientSliderCell)?.gradientColors = track.colors
-        slider.setAccessibilityLabel(help)
+        slider.setAccessibilityLabel(tip)
         return slider
     }
 
@@ -95,7 +98,7 @@ struct CameraRawSlider: NSViewRepresentable {
         context.coordinator.onReset = onReset
         slider.onReset = context.coordinator.reset
         slider.onTrackClick = context.coordinator.onChange
-        slider.toolTip = help
+        slider.toolTip = tip
         slider.minValue = range.lowerBound
         slider.maxValue = range.upperBound
         if !slider.isTrackingValue { slider.doubleValue = value }

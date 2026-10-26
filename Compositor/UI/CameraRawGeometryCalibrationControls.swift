@@ -64,6 +64,7 @@ struct CameraRawGeometryControls: View {
 
     private func geometrySlider(_ title: String, _ key: WritableKeyPath<CameraRawGeometrySettings, Double>,
                                 range: ClosedRange<Double> = CameraRawGeometrySettings.toneRange, help: String) -> some View {
+        let (title, help) = (localizedString(title), localizedString(help))
         let value = raw.geometry[keyPath: key]
         return HStack(spacing: 10) {
             Text(title).frame(minWidth: CameraRawControls.labelWidth, alignment: .leading).help(help)
@@ -98,11 +99,11 @@ struct CameraRawCalibrationControls: View {
                 ForEach(CameraRawProcessVersion.allCases, id: \.self) { Text(verbatim: localizedString($0.rawValue)).tag($0) }
             }
             .help("Chooses how strongly the calibration sliders below are applied. Version 6 is the current default.")
-            Text(raw.calibration.process.summary)
+            Text(verbatim: localizedString(raw.calibration.process.summary))
                 .font(.caption)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
-                .help(raw.calibration.process.summary)
+                .help(localizedString(raw.calibration.process.summary))
             Text("Shadows").font(.subheadline)
             calibrationSlider("Tint", \.shadowTint, help: "Adds green or magenta to the darkest tones.")
             Text("Red Primary").font(.subheadline)
@@ -122,6 +123,7 @@ struct CameraRawCalibrationControls: View {
     }
 
     private func calibrationSlider(_ title: String, _ key: WritableKeyPath<CameraRawCalibrationSettings, Double>, help: String) -> some View {
+        let (title, help) = (localizedString(title), localizedString(help))
         let value = raw.calibration[keyPath: key]
         return HStack(spacing: 10) {
             Text(title).frame(minWidth: CameraRawControls.labelWidth, alignment: .leading).help(help)

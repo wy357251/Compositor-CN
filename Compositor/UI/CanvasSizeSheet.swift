@@ -9,7 +9,10 @@ struct CanvasSizeSheet: View {
     @State private var anchor = 4
     @State private var extensionChoice = "Transparent"
     @State private var customColor = PaletteColor.white
-    private let anchorNames = ["Top left", "Top center", "Top right", "Middle left", "Center", "Middle right", "Bottom left", "Bottom center", "Bottom right"]
+    /// Read once when the sheet is built: `Text(anchorNames[...])` and `.help(...)` take a variable, so the catalog
+    /// lookup has to happen here rather than at the call site.
+    private let anchorNames = ["Top left", "Top center", "Top right", "Middle left", "Center", "Middle right",
+                              "Bottom left", "Bottom center", "Bottom right"].map { localizedString($0) }
 
     init(document: CanvasDocument, session: EditorSession, finish: @escaping (CanvasSizeOptions?) -> Void) {
         self.foreground = session.foregroundColor
@@ -110,7 +113,7 @@ struct CanvasSizeSheet: View {
                                     }
                                     .tint(index == anchor ? .accentColor : .secondary)
                                     .help(anchorNames[index]).accessibilityLabel(anchorNames[index])
-                                    .accessibilityValue(index == anchor ? "Selected" : "")
+                                    .accessibilityValue(index == anchor ? localizedString("Selected") : "")
                                 }
                             }
                         }

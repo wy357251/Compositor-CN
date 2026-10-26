@@ -338,6 +338,7 @@ struct CameraRawControls: View {
     private func slider(_ title: String, _ key: WritableKeyPath<CameraRawSettings, Double>, range: ClosedRange<Double>,
                         decimals: Int, clipping: CameraRawClipping?, track: CameraRawSliderTrack = .plain,
                         reset resetValue: Double = 0, help: String) -> some View {
+        let (title, help) = (localizedString(title), localizedString(help))
         let step = pow(10, Double(decimals))
         return HStack(spacing: 10) {
             Text(title)

@@ -202,9 +202,9 @@ struct NewCanvasSheet: View {
     }
     private func dimension(_ title: String, text: Binding<String>, field: Field) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(title).font(.callout.weight(.medium))
+            Text(verbatim: localizedString(title)).font(.callout.weight(.medium))
             HStack {
-                TextField(title, text: text).textFieldStyle(.plain)
+                TextField(localizedString(title), text: text).textFieldStyle(.plain)
                     .focused($focusedField, equals: field)
                     .accessibilityIdentifier(title.lowercased() + "Input")
                 Text(verbatim: localizedString(unit.rawValue)).foregroundStyle(.secondary)
@@ -223,14 +223,14 @@ private struct CyclePill: View {
     init(_ title: String, help: String, action: @escaping () -> Void) { self.title = title; self.help = help; self.action = action }
     var body: some View {
         Button(action: action) {
-            Text(title).foregroundStyle(.secondary).monospacedDigit()
+            Text(verbatim: localizedString(title)).foregroundStyle(.secondary).monospacedDigit()
                 .padding(.horizontal, 6).padding(.vertical, 2)
                 .background(.quaternary.opacity(hovering ? 1 : 0), in: Capsule())
                 .contentShape(Capsule())
         }
         .buttonStyle(.plain)
         .onHover { hovering = $0 }
-        .help(help)
+        .help(localizedString(help))
     }
 }
 

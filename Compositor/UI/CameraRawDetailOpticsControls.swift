@@ -43,6 +43,7 @@ struct CameraRawDetailControls: View {
 
     private func sharpenSlider(_ title: String, _ key: WritableKeyPath<CameraRawDetailSettings, Double>, range: ClosedRange<Double>,
                                decimals: Int, reset: Double, maskingPreview: Bool = false, help: String) -> some View {
+        let (title, help) = (localizedString(title), localizedString(help))
         let step = pow(10, Double(decimals))
         let value = raw.detail[keyPath: key]
         return HStack(spacing: 10) {
@@ -143,6 +144,7 @@ struct CameraRawOpticsControls: View {
 
     private func opticsSlider(_ title: String, _ key: WritableKeyPath<CameraRawOpticsSettings, Double>, range: ClosedRange<Double>,
                               reset: Double, help: String) -> some View {
+        let (title, help) = (localizedString(title), localizedString(help))
         let value = raw.optics[keyPath: key]
         return HStack(spacing: 10) {
             Text(title).frame(minWidth: CameraRawControls.labelWidth, alignment: .leading).help(help)
@@ -163,7 +165,8 @@ struct CameraRawOpticsControls: View {
 
     private func hueRange(_ title: String, low: WritableKeyPath<CameraRawOpticsSettings, Double>,
                           high: WritableKeyPath<CameraRawOpticsSettings, Double>, help: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
+        let (title, help) = (localizedString(title), localizedString(help))
+        return VStack(alignment: .leading, spacing: 4) {
             Text(title).font(.caption).foregroundStyle(.secondary).help(help)
             HStack(spacing: 8) {
                 Text("Low").font(.caption2).help("Start of the hue range, in degrees.")

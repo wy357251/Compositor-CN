@@ -38,26 +38,30 @@ brew install --cask robbietilton-compositor
 defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 ```
 
-译文存放在 `Compositor/Localizable.xcstrings`（Xcode String Catalog，760 个键），工程在 `knownRegions` 里注册了 `"zh-Hans"`。绝大部分界面靠 SwiftUI 的 `LocalizedStringKey` 自动生效，不需要改代码；只有少数地方加了改动，见下。
+译文存放在 `Compositor/Localizable.xcstrings`（Xcode String Catalog，947 个键），工程在 `knownRegions` 里注册了 `"zh-Hans"`。绝大部分界面靠 SwiftUI 的 `LocalizedStringKey` 自动生效，不需要改代码；只有少数地方加了改动，见下。
 
 覆盖范围目前是这样的：
 
-- **已中文化**：菜单栏与全部命令（含「滤镜」子菜单、「新建调整图层」子菜单）、编辑菜单里的撤销 / 重做动作名、图层面板的右键命令与效果行、各处下拉框的取值（单位、形状、抖动样式、镜头效果、散景形状、Camera Raw 分区等）、命令面板（⌘F）、工具属性栏、调整与滤镜面板、画布大小与图像大小对话框里的动态行数、导出对话框、参考线、**全部 11 个错误类型的提示文字**（工程损坏、导入导出失败、选区过于复杂等），以及大部分 tooltip 与 VoiceOver 标签。
+- **已中文化**：菜单栏与全部命令（含「滤镜」子菜单、「新建调整图层」子菜单）、编辑菜单里的撤销 / 重做动作名、图层面板的右键命令与效果行、各处下拉框的取值（单位、形状、抖动样式、镜头效果、散景形状、Camera Raw 分区等）、命令面板（⌘F）、工具属性栏、调整与滤镜面板的参数名与其 tooltip、画布大小的锚点（左上 / 居中…）与动态行数、图像大小对话框、导出对话框、参考线、**全部 11 个错误类型的提示文字**（工程损坏、导入导出失败、选区过于复杂等），以及大部分 tooltip 与 VoiceOver 标签。
 - **无需翻译**：裁切比例（`1:1`、`4:3`、`16:9`）、色彩缩写（`RGB`、`HSL`）与只含数字单位的动态文案（`1,200 × 800 px`、`150%`、`40 ms · 25 fps`），两种语言写法相同。
 - **故意保持英文**：图层的默认名（`Layer 1`、形状与滤镜产生的图层名）。这些会被写进 `.comp` 工程文件，属于文档内容而不是界面文字，本地化会让分支的工程与上游不一致。
 
-有三类文字不是 SwiftUI 字面量，得靠代码改动接上目录：
+有四类文字不是 SwiftUI 字面量，得靠代码改动接上目录：
 
 1. **枚举名当标题用**。菜单与撤销标题原先显示枚举的 `rawValue`（`Gaussian Blur`、`Add Noise` 等），而 `AdjustmentKind` 的 `rawValue` 同时是写进工程文件的存档键，不能改。所以给 `FilterKind`、`AdjustmentKind`、`LayerEffectKind` 各加了一层只用于显示的 `displayName`，`rawValue` 原样保留。
 2. **AppKit 构造的菜单**。图层面板右键菜单用 `NSMenuItem(title:)`，它收的是普通 `String`，不会自动查表，所以在构造处显式走 `localizedString(_:)`。
 3. **撤销标题**。在 `EditorSession.beginEdit` 里统一查一次表，各处传入的英文动作名因此自动跟随界面语言；由名称拼出的标题（`Add %@`、`Edit %@ Adjustment`）走 `localized(_:_:)`。
 4. **AppKit 的 tooltip 与 VoiceOver 标签**。`NSToolbar`/`NSButton` 的 `toolTip = "…"` 和 `setAccessibilityLabel("…")` 收的都是普通 `String`，SwiftUI 那套自动机制完全管不到，所以在赋值处走 `localizedString(_:)`。
 
+还有第五类最容易漏：**面板自己的 helper 用 `String` 形参收英文字面量**。滤镜与 Camera Raw 面板把参数名和 tooltip 写成 `slider("Exposure", …, help: "Brightens…")`，`CanvasSizeSheet` 把九个锚点写进一个数组，渲染时都是 `Text(变量)` / `.help(变量)`——同一条 SwiftUI 规则，变量不查表，于是整片滑块标签在中文界面下仍是英文。这类只在 helper 内部改：进函数先 `let (title, help) = (localizedString(title), localizedString(help))`，函数体一行不动，200 多个调用点也不用动。`CameraRawSlider` 收到的 `help` 则在 `makeNSView` 里查表，因为那里直接写进 `toolTip`。少数例外保持原样：`LevelsSheet.field(name:)` 与 `NewCanvasSheet.dimension(title:)` 的名称同时用作无障碍标识符和比较条件，只在显示的两处查表；`X`、`Y`、`R`、`G`、`B`、`°`、`px` 这类符号两种语言写法相同，不入库。
+
 带参数的文案统一用 `localized("Current: %@ × %@ pixels", 宽, 高)`：键写死在源码里，因此可以逐条断言解析结果，不依赖 Xcode 的自动抽取（命令行构建不会抽取，只有 GUI 里构建或手动执行 Extract 才会）。两个约定：占位符一律用 `%@`，`localized` 会把参数转成 `NSString`，因为把 `Int` 直接交给 `%@` 会崩溃；译文里若出现字面的百分号，必须写成 `%%`，否则会被当成格式说明符吃掉。
 
 菜单里的 `Undo ` / `Redo ` 前缀用 `Text("Undo ") + Text(name)` 拼接，而不是字符串插值：SwiftUI 为插值生成的目录键格式无法在不开界面的情况下确认，猜错就是静默不生效，而拼接的两半都是确定的字面量键。
 
 相应地，测试里对菜单标题与撤销名的断言写成 `localizedString("…")`，只关心动作身份、不依赖界面语言。
+
+`CompositorTests/LocalizationTests.swift` 守住这两条规则本身：它读构建产物里编译好的 `en.lproj` / `zh-Hans.lproj` 表，要求每个含 `%@` 的键的译文占位符与键一一对应（非格式键不许凭空造出 `%@`），并把每个格式译文按 `localized` 的方式填一遍；再把画布大小、图像大小、新建、导出（逐个格式）、全部滤镜面板、逐个图层样式与调整面板真的塞进 `NSHostingView` 走一次布局。加这两层是因为曾经有两类缺陷在 818 个测试全绿、构建也通过的情况下漏过：译文里未转义的 `%` 被当成格式说明符吃掉，以及把 `Int` 直接交给 `%@` 让对话框一打开就崩溃。测试里另有一条反向对照（`theConversionCheckIsNotBlind`），确认占位符检查真的能抓到这两种写法。
 
 在 Xcode 里打开 `Localizable.xcstrings` 会自动抽取代码里尚未登记的键，补录的条目以「未翻译」状态出现，填上译文即可生效。
 
