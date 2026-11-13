@@ -38,22 +38,24 @@ brew install --cask robbietilton-compositor
 defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 ```
 
-译文存放在 `Compositor/Localizable.xcstrings`（Xcode String Catalog，969 个键），工程在 `knownRegions` 里注册了 `"zh-Hans"`。绝大部分界面靠 SwiftUI 的 `LocalizedStringKey` 自动生效，不需要改代码；只有少数地方加了改动，见下。
+译文存放在 `Compositor/Localizable.xcstrings`（Xcode String Catalog，1063 个键），工程在 `knownRegions` 里注册了 `"zh-Hans"`。绝大部分界面靠 SwiftUI 的 `LocalizedStringKey` 自动生效，不需要改代码；只有少数地方加了改动，见下。
 
 覆盖范围目前是这样的：
 
-- **已中文化**：菜单栏与全部命令（含「滤镜」子菜单、「新建调整图层」子菜单）、编辑菜单里的撤销 / 重做动作名、图层面板的右键命令与效果行、各处下拉框的取值（单位、形状、抖动样式、镜头效果、散景形状、Camera Raw 分区等）、命令面板（⌘F）、工具属性栏、调整与滤镜面板的参数名与其 tooltip、画布大小的锚点（左上 / 居中…）与动态行数、对齐与分布图层的按钮与 tooltip、图像大小对话框、导出对话框、参考线、**全部 11 个错误类型的提示文字**（工程损坏、导入导出失败、选区过于复杂等），以及大部分 tooltip 与 VoiceOver 标签。
+- **已中文化**：菜单栏与全部命令（含「滤镜」子菜单、「新建调整图层」子菜单）、编辑菜单里的撤销 / 重做动作名、图层面板的右键命令与效果行、各处下拉框的取值（单位、形状、抖动样式、镜头效果、散景形状、Camera Raw 分区等）、命令面板（⌘F）、工具属性栏、调整与滤镜面板的参数名与其 tooltip、画布大小的锚点（左上 / 居中…）与动态行数、对齐与分布图层的按钮与 tooltip、图像大小对话框、导出对话框、参考线、**全部 11 个错误类型的提示文字**（工程损坏、导入导出失败、选区过于复杂等），以及大部分 tooltip 与 VoiceOver 标签——含 1.6.x 新增的体积光、边缘光、减少杂色面板，GIF 与导出预览的播放暂停按钮，选区扩展 / 收缩 / 羽化，图层页签的拖放提示，以及「显示附加元素」「距离」开关。
 - **无需翻译**：裁切比例（`1:1`、`4:3`、`16:9`）、色彩缩写（`RGB`、`HSL`）与只含数字单位的动态文案（`1,200 × 800 px`、`150%`、`40 ms · 25 fps`），两种语言写法相同。
 - **故意保持英文**：图层的默认名（`Layer 1`、形状与滤镜产生的图层名）。这些会被写进 `.comp` 工程文件，属于文档内容而不是界面文字，本地化会让分支的工程与上游不一致。
 
-有四类文字不是 SwiftUI 字面量，得靠代码改动接上目录：
+有六类文字不是干净的 SwiftUI 字面量，得靠代码改动接上目录：
 
 1. **枚举名当标题用**。菜单与撤销标题原先显示枚举的 `rawValue`（`Gaussian Blur`、`Add Noise` 等），而 `AdjustmentKind` 的 `rawValue` 同时是写进工程文件的存档键，不能改。所以给 `FilterKind`、`AdjustmentKind`、`LayerEffectKind` 各加了一层只用于显示的 `displayName`，`rawValue` 原样保留。
 2. **AppKit 构造的菜单**。图层面板右键菜单用 `NSMenuItem(title:)`，它收的是普通 `String`，不会自动查表，所以在构造处显式走 `localizedString(_:)`。
 3. **撤销标题**。在 `EditorSession.beginEdit` 里统一查一次表，各处传入的英文动作名因此自动跟随界面语言；由名称拼出的标题（`Add %@`、`Edit %@ Adjustment`）走 `localized(_:_:)`。
 4. **AppKit 的 tooltip 与 VoiceOver 标签**。`NSToolbar`/`NSButton` 的 `toolTip = "…"` 和 `setAccessibilityLabel("…")` 收的都是普通 `String`，SwiftUI 那套自动机制完全管不到，所以在赋值处走 `localizedString(_:)`。
 
-还有第五类最容易漏：**面板自己的 helper 用 `String` 形参收英文字面量**。滤镜与 Camera Raw 面板把参数名和 tooltip 写成 `slider("Exposure", …, help: "Brightens…")`，`CanvasSizeSheet` 把九个锚点写进一个数组，渲染时都是 `Text(变量)` / `.help(变量)`——同一条 SwiftUI 规则，变量不查表，于是整片滑块标签在中文界面下仍是英文。这类只在 helper 内部改：进函数先 `let (title, help) = (localizedString(title), localizedString(help))`，函数体一行不动，200 多个调用点也不用动。`CameraRawSlider` 收到的 `help` 则在 `makeNSView` 里查表，因为那里直接写进 `toolTip`。少数例外保持原样：`LevelsSheet.field(name:)` 与 `NewCanvasSheet.dimension(title:)` 的名称同时用作无障碍标识符和比较条件，只在显示的两处查表；`X`、`Y`、`R`、`G`、`B`、`°`、`px` 这类符号两种语言写法相同，不入库。
+第五类最容易漏：**面板自己的 helper 用 `String` 形参收英文字面量**。滤镜与 Camera Raw 面板把参数名和 tooltip 写成 `slider("Exposure", …, help: "Brightens…")`，`CanvasSizeSheet` 把九个锚点写进一个数组，渲染时都是 `Text(变量)` / `.help(变量)`——同一条 SwiftUI 规则，变量不查表，于是整片滑块标签在中文界面下仍是英文。这类只在 helper 内部改：进函数先 `let (title, help) = (localizedString(title), localizedString(help))`，函数体一行不动，200 多个调用点也不用动。`CameraRawSlider` 收到的 `help` 则在 `makeNSView` 里查表，因为那里直接写进 `toolTip`。少数例外保持原样：`LevelsSheet.field(name:)` 与 `NewCanvasSheet.dimension(title:)` 的名称同时用作无障碍标识符和比较条件，只在显示的两处查表；`X`、`Y`、`R`、`G`、`B`、`°`、`px` 这类符号两种语言写法相同，不入库。
+
+第六类是**算出来的字符串**：`.help(isPlaying ? "Pause" : "Play")`、`.accessibilityLabel(kind.rawValue + " color")`、`show(title: operation.rawValue + " Selection")`、`Text("Light \(index + 1)")`。字面量一旦经过三元式、拼接或插值，SwiftUI 收到的就是 `String`，同样不查表；而插值字面量（`Text("\(x) px")`）虽然走 `LocalizedStringKey`，它生成的目录键无法在不开界面的情况下确定，猜错就是静默失效。所以这类要么在调用处套 `localizedString(...)`（整句成为键），要么改成显式格式键 `localized("Light %@", …)`。纯数字与单位的插值（`1,200 × 800 px`、`150%`、`40 ms · 25 fps`）保持原样，两种语言写法相同。
 
 带参数的文案统一用 `localized("Current: %@ × %@ pixels", 宽, 高)`：键写死在源码里，因此可以逐条断言解析结果，不依赖 Xcode 的自动抽取（命令行构建不会抽取，只有 GUI 里构建或手动执行 Extract 才会）。两个约定：占位符一律用 `%@`，`localized` 会把参数转成 `NSString`，因为把 `Int` 直接交给 `%@` 会崩溃；译文里若出现字面的百分号，必须写成 `%%`，否则会被当成格式说明符吃掉。
 
@@ -74,7 +76,7 @@ defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 - 图层与图层组，支持不透明度与 Photoshop 的全部混合模式及其排列顺序——组的透明度会压暗组内一切
 - 图层蒙版：可在画布任意位置（超出图层自身像素范围）绘制、填充、反相、模糊和羽化；可链接或取消链接，让蒙版独立变换
 - 剪贴蒙版与组蒙版
-- 调整图层：色相/饱和度、色阶、曲线、曝光、渐变映射、颗粒、黑白、色彩平衡、反相，以及可作为图层的滤镜：高斯模糊、动感模糊、渐进模糊、锐化、噪声、晕影、泛光 / 发光、RGB 分离、镜头效果与色调对比
+- 调整图层：色相/饱和度、色阶、曲线、曝光、渐变映射、颗粒、黑白、色彩平衡、反相，以及可作为图层的滤镜：高斯模糊、动感模糊、渐进模糊、锐化、减少杂色、噪声、晕影、泛光 / 发光、RGB 分离、镜头效果与色调对比
 - 图层效果：描边、投影、颜色叠加、内阴影、外发光、内发光，在 GPU 上渲染，随时可编辑
 - 向下合并、合并图层与合并组（⌘E）
 - 复制、就地重命名、拖拽排序与嵌套；Option 拖拽复制；图层面板有右键菜单
@@ -114,7 +116,7 @@ defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 - Camera Raw 滤镜：光影、颜色、曲线、混色器、颜色分级、细节、光学与几何，面板位于画布旁；每个分区都能从自己的标题栏复位为默认值
 - 色阶（含自动色阶）、曲线、色相/饱和度、曝光、渐变映射、颗粒、黑白、色彩平衡与反相
 - 高斯模糊与动感模糊，都能向外扩散到图层边缘之外
-- 锐化（USM 未遮蔽锐化，可调数量与半径）、添加噪声、晕影、泛光 / 发光、抖动、扫描线、RGB 分离、镜头效果（变形镜头耀斑、星芒、雾化、棱镜，以及圆形 / 六边形 / 椭圆 / 猫眼光斑）、色调对比、镜头校正与移除背景
+- 锐化（USM 未遮蔽锐化，可调数量与半径）、减少杂色、添加噪声、晕影、泛光 / 发光、抖动、扫描线、RGB 分离、镜头效果（变形镜头耀斑、星芒、雾化、棱镜，以及圆形 / 六边形 / 椭圆 / 猫眼光斑）、色调对比、体积光（按主体周围的深度起雾，由你放置的灯照亮，画面自身的高光也会透进雾里，可选光束）、边缘光（主体背后最多三盏有色灯，光晕把主体裹进光里）、镜头校正与移除背景
 - 实时预览；若有选区则只作用于选区
 - 再次滤镜（⌃F）：用同样的设置再跑一遍上一个滤镜
 
@@ -124,6 +126,7 @@ defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 - 搜索命令（⌘F）：像 Raycast 或 Obsidian 那样按名字找到每条菜单命令与工具，按 Return 执行
 - 切换全屏（F）：画布单独铺满整块黑屏，所有面板收起；再按 F 或 Esc 恢复
 - 标尺（⌘R）、从标尺拖出参考线、可调整间隔与细分的布局网格，以及可对齐到参考线、网格、图层和文档边界
+- 距离（视图 › 显示 › 距离，默认关闭）：拖动图层时显示到画布边缘与同层高度邻层的像素间距；按住 ⌘ 则显示到指针下的图层或画布的间距
 - 裁剪带吸附，支持 3:4、9:16 等比例，Option 可对称裁剪；有选区时裁剪框从选区开始
 - 画布大小、图像大小与裁边
 - 窗口高度不够时，工具栏自动排成两列
@@ -131,7 +134,8 @@ defaults write com.wy357251.compositor AppleLanguages -array zh-Hans
 - 缩小查看时清晰的高质量降采样，放大查看时显示像素网格
 - 导入 JPEG、PNG、HEIC、TIFF、WebP、SVG、PDF（每一页各自成一个图层，按 300 DPI 或适配画布）、动画 GIF（一个图层，其帧显示在画布下方的条带里，可播放、绘制、复制、删除与改时长）、相机 RAW（先经过一步原始图像处理）以及 Photoshop 的 PSD 与 PSB（8 位 RGB；不支持 CMYK）。每个 Photoshop 画板各自开一个标签页；图层组、蒙版、混合模式、填充矩形/椭圆和简单的横排文字保持可编辑；其他矢量与竖排文字转为像素。应用之前会先显示一份转换报告
 - 大文档：内存预算随你的 Mac 容量调整；大到无法打开的 Photoshop 文件会把图层裁切到画布范围
-- 导出 PNG（⇧⌘E）、导出 JPEG（⇧⌥⌘S），以及「导出为」（⇧⌥⌘W）支持 PNG、JPEG、按打印尺寸的单页 PDF，或在有 GIF 图层时导出动画 GIF，可缩放，带实时预览、JPEG 品质与目标体积；「导出为」里的通道包会把图层打包进 PNG 的红绿蓝与 Alpha 通道，用于游戏贴图，而 RGB 分离的「拆分到图层」能把图层还原成那四个；合并拷贝
+- 导出 PNG（⇧⌘E）与「导出为」（⇧⌥⌘S 或 ⇧⌥⌘W）：PNG、JPEG、按打印尺寸的单页 PDF，或在有 GIF 图层时导出动画 GIF，可缩放，带实时预览、JPEG 品质与目标体积，格式选择跨启动记住；「导出为」里的通道包会把图层打包进 PNG 的红绿蓝与 Alpha 通道，用于游戏贴图，而 RGB 分离的「拆分到图层」能把图层还原成那四个；在图层面板右键可把每个图层各自导出为裁到像素的 PNG；合并拷贝
+- 直接打开的图片再导出时保持原样：标签页用它的文件名，「导出为」与「存储」也从它的名字、目录与格式开始
 - 项目保存的同时可以继续工作
 - 通篇采用 Photoshop 风格快捷键，可在「编辑 › 键盘快捷键」中自定义
 - 像 Photoshop 那样拖动数字标签来擦取其值
@@ -194,3 +198,5 @@ git push origin v1.5.10-CN
 ## 许可
 
 MIT — 见 [LICENSE](LICENSE)。上游版权归 Robbie Tilton 所有；本仓库的中文界面改动同样以 MIT 授权。
+
+体积光用的深度模型 DepthMini 由 [Depth Anything V2 Small](https://github.com/DepthAnything/Depth-Anything-V2)（Apache-2.0）蒸馏而来，起点是 torchvision 里 ImageNet 预训练的 MobileNetV3 权重（BSD-3-Clause）。它不打包进 App，首次打开体积光滤镜时才下载。

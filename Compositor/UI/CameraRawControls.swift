@@ -78,8 +78,8 @@ struct CameraRawControls: View {
                 .foregroundStyle(on ? (shadows ? Color.blue : Color.red) : Color.white.opacity(0.55))
         }
         .buttonStyle(.plain)
-        .help(shadows ? "Show clipped shadows in blue on the preview." : "Show clipped highlights in red on the preview.")
-        .accessibilityLabel(shadows ? "Shadow Clipping Indicator" : "Highlight Clipping Indicator")
+        .help(localizedString(shadows ? "Show clipped shadows in blue on the preview." : "Show clipped highlights in red on the preview."))
+        .accessibilityLabel(localizedString(shadows ? "Shadow Clipping Indicator" : "Highlight Clipping Indicator"))
     }
 
     private func graph(_ scope: CameraRawScope?, mode: CameraRawScopeMode) -> some View {
@@ -105,7 +105,7 @@ struct CameraRawControls: View {
                 }
             }
         }
-        .accessibilityLabel(mode == .histogram ? "RGB histogram" : "Vectorscope")
+        .accessibilityLabel(localizedString(mode == .histogram ? "RGB histogram" : "Vectorscope"))
     }
 
     private func ribbon(_ bins: [Double], color: Color, peak: Double, in context: GraphicsContext, size: CGSize) {
@@ -136,7 +136,7 @@ struct CameraRawControls: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(section.rawValue)
+                .accessibilityLabel(localizedString(section.rawValue))
                 Spacer(minLength: 0)
                 if section == .light, raw.adjustsLight {
                     eye(shown: session.filterEdit?.showsCameraRawLight ?? true, name: "Light", group: .light)
@@ -320,8 +320,8 @@ struct CameraRawControls: View {
             Image(systemName: shown ? "eye" : "eye.slash")
         }
         .buttonStyle(.borderless)
-        .help(shown ? "Hide \(name) in the preview" : "Show \(name) in the preview")
-        .accessibilityLabel(shown ? "Hide \(name)" : "Show \(name)")
+        .help(localized(shown ? "Hide %@ in the preview" : "Show %@ in the preview", name))
+        .accessibilityLabel(localized(shown ? "Hide %@" : "Show %@", name))
     }
 
     /// Puts an adjusted section back to its defaults.

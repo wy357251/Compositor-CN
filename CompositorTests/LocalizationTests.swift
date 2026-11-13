@@ -100,11 +100,23 @@ struct LocalizationTests {
                     // 1.5.10: the align panel's icons compose their titles from enum rawValues at each call.
                     "Sharpen", "Align", "Distribute", "Left Edges", "Right Edges", "Top Edges", "Bottom Edges",
                     "Horizontal Centers", "Vertical Centers", "Horizontal Spacing", "Vertical Spacing",
-                    "Custom…", "Custom ratio"] {
+                    "Custom…", "Custom ratio",
+                    // 1.6.x: Volumetric Light and Rim Light, Reduce Noise, the selection icons, the delete footer
+                    // button, GIF play/pause and the levels eyedropper's sample points.
+                    "Haze", "Intensity", "Shafts", "Keep Subject Clear", "Depth Contrast", "Fringe", "Choke",
+                    "Add Light", "Remove this light", "Extract Depth", "Distances", "Preserve Details",
+                    "Color Noise", "Expand Selection", "Feather Selection", "Align left", "Align right",
+                    "black", "gray", "white", "Pause", "Play", "Delete layer mask", "New filter layer"] {
             #expect(localizedString(key) != key, "\(key) is still English")
         }
         #expect(localized("Align %@", localizedString("Left Edges")) != "Align Left Edges")
         #expect(localized("Distribute %@ (three or more layers)", localizedString("Vertical Spacing")).contains(localizedString("Vertical Spacing")))
+        // Sites that used to build a LocalizedStringKey by interpolation, whose generated key no one can name
+        // headlessly: now explicit keys, with the argument landing where the sentence expects it.
+        #expect(localized("Original %@ histogram", localizedString("Red")).contains(localizedString("Red")))
+        #expect(localized("Light %@", 2).contains("2"))
+        #expect(localized("Enter a whole number from 1 to %@ px.", 500).contains("500"))
+        #expect(localized(" · Feather %@ px", 5).contains("5"))
     }
 
     /// Laid out in a hosting view the way the sheet is: the body runs, so a line that crashes, crashes here.
@@ -155,6 +167,12 @@ struct LocalizationTests {
 
     @Test func filterSheetsLayOut() throws {
         let session = try session()
+        // Volumetric Light fetches its depth model the first time it opens; the panel is what's under test here, and
+        // a test suite has no business reaching for the network. As in VolumetricLightTests, the source is pointed
+        // somewhere local that isn't there.
+        let modelSource = DepthModel.source
+        DepthModel.source = URL(fileURLWithPath: "/private/tmp/compositor-localization-no-model/", isDirectory: true)
+        defer { DepthModel.source = modelSource }
         for kind in FilterKind.allCases {
             session.beginFilter(kind)
             render(FilterSheet(session: session), "Filter (\(kind.rawValue))")

@@ -113,8 +113,8 @@ struct ExportAsSheet: View {
                         isGIFPreviewPlaying.toggle()
                     } label: { Image(systemName: isGIFPreviewPlaying ? "pause.fill" : "play.fill").foregroundStyle(.white) }
                         .disabled(!isReady)
-                        .help(isGIFPreviewPlaying ? "Pause the animation preview." : "Play the animation preview.")
-                        .accessibilityLabel(isGIFPreviewPlaying ? "Pause animation preview" : "Play animation preview")
+                        .help(localizedString(isGIFPreviewPlaying ? "Pause the animation preview." : "Play the animation preview."))
+                        .accessibilityLabel(localizedString(isGIFPreviewPlaying ? "Pause animation preview" : "Play animation preview"))
                 }
                 Button("Fit") { zoom = nil }.disabled(zoom == nil)
                     .help("Show the whole image (⌘0)")
@@ -169,7 +169,7 @@ struct ExportAsSheet: View {
                     GridRow {
                         Text("Quality")
                         HStack {
-                            Slider(value: $options.quality, in: 0...1, step: 0.01).frame(width: 300)
+                            AppSlider(value: $options.quality, in: 0...1, step: 0.01).frame(width: 300)
                             Text("\(Int((options.quality * 100).rounded()))%").monospacedDigit().frame(width: 45, alignment: .trailing)
                         }
                     }
@@ -415,7 +415,7 @@ struct ExportAsSheet: View {
     /// A channel's source: one of the document's layers or groups, top first, or solid black or white.
     private func channelPicker(_ index: Int, channel: ChannelPack.Channel) -> some View {
         let layers = snapshot?.manifest.layers ?? []
-        return Picker(channel.rawValue, selection: $channels[index]) {
+        return Picker(localizedString(channel.rawValue), selection: $channels[index]) {
             Text("Black").tag(ChannelPack.Source.black)
             Text("White").tag(ChannelPack.Source.white)
             Divider()

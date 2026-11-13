@@ -45,17 +45,17 @@ struct RawDevelopSheet: View {
                 slider("Boost", value: $settings.boost, range: 0...1, unit: "", precision: 2)
                 slider("Noise Reduction", value: $settings.noiseReduction, range: 0...1, unit: "", precision: 2)
                     .disabled(!settings.supportsNoiseReduction)
-                    .help(settings.supportsNoiseReduction ? "Smooths grain, at the cost of fine detail"
-                                                          : "Not available for this camera")
+                    .help(localizedString(settings.supportsNoiseReduction ? "Smooths grain, at the cost of fine detail"
+                                                          : "Not available for this camera"))
                 HStack(spacing: 20) {
                     Toggle("Lens Correction", isOn: $settings.lensCorrection)
                         .disabled(!settings.supportsLensCorrection)
-                        .help(settings.supportsLensCorrection ? "Removes the lens's distortion and vignetting"
-                                                              : "This file has no lens profile")
+                        .help(localizedString(settings.supportsLensCorrection ? "Removes the lens's distortion and vignetting"
+                                                              : "This file has no lens profile"))
                     Toggle("Highlight Recovery", isOn: $settings.highlightRecovery)
                         .disabled(!settings.supportsHighlightRecovery)
-                        .help(settings.supportsHighlightRecovery ? "Brings back detail in bright areas the camera partly clipped"
-                                                                 : "Not available for this camera")
+                        .help(localizedString(settings.supportsHighlightRecovery ? "Brings back detail in bright areas the camera partly clipped"
+                                                                 : "Not available for this camera"))
                 }
                 .padding(.leading, 120)
 
@@ -98,7 +98,7 @@ struct RawDevelopSheet: View {
         let title = localizedString(title)
         return HStack(spacing: 10) {
             Text(title).frame(width: 110, alignment: .leading)
-            Slider(value: value, in: range).frame(width: 300)
+            AppSlider(value: value, in: range).frame(width: 300)
             Text(String(format: "%.\(precision)f%@", value.wrappedValue, unit))
                 .monospacedDigit().foregroundStyle(.secondary)
                 .frame(width: 80, alignment: .trailing)
