@@ -2,6 +2,9 @@ name: Verify
 
 on:
   push:
+    # Branches only. A bare `push` also fires on tags, and release.yml runs the same suite on its way to the DMG,
+    # so every release would otherwise pay for the tests twice. `**` still covers branches with slashes.
+    branches: ['**']
   pull_request:
   # Weekly, and by hand from the Actions tab, every suite runs, the filter suites included.
   schedule:
